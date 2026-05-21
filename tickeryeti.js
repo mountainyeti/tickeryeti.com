@@ -1,35 +1,19 @@
-$(function(){
-    $('#ticker').on('submit', function(e) {
-        e.preventDefault();  //prevent form from submitting
-        var yahoo = 'http://www.finance.yahoo.com/quote/';
-        var	seekingalphaA = 'http://www.seekingalpha.com/symbol/';
-        var seekingalphaB = '/earnings'
-        var secA = 'https://www.sec.gov/cgi-bin/browse-edgar?CIK=';
-        var secB = '&owner=exclude&action=getcompany';
-        var google = 'https://finance.google.com/finance?q=';
-        var finviz = 'https://www.finviz.com/quote.ashx?t=';
-        var stanford = 'http://securities.stanford.edu/filings.html';
-        var userEntry = $('#tickersymbol').val();
+document.getElementById('ticker').addEventListener('submit', function(e) {
+    e.preventDefault();
+    var ticker = document.getElementById('tickersymbol').value.trim().toUpperCase();
+    if (!ticker) return;
 
-        if (document.getElementById('yahoocheck_tickeryeti').checked) {
-            window.open(yahoo + userEntry, '_blank');
+    var sites = [
+        { id: 'yahoocheck_tickeryeti',        url: 'https://finance.yahoo.com/quote/' + ticker },
+        { id: 'seekingalphacheck_tickeryeti',  url: 'https://seekingalpha.com/symbol/' + ticker + '/earnings' },
+        { id: 'seccheck_tickeryeti',           url: 'https://www.sec.gov/cgi-bin/browse-edgar?CIK=' + ticker + '&owner=exclude&action=getcompany' },
+        { id: 'finvizcheck_tickeryeti',        url: 'https://finviz.com/quote.ashx?t=' + ticker },
+        { id: 'stanfordcheck_tickeryeti',      url: 'https://securities.stanford.edu/filings.html' },
+    ];
+
+    sites.forEach(function(site) {
+        if (document.getElementById(site.id).checked) {
+            window.open(site.url, '_blank');
         }
-        if (document.getElementById('seekingalphacheck_tickeryeti').checked) {
-            window.open(seekingalphaA + userEntry + seekingalphaB, '_blank');
-        } 
-        if (document.getElementById('seccheck_tickeryeti').checked) {
-            window.open(secA + userEntry + secB, '_blank');
-        } 
-        if (document.getElementById('googlecheck_tickeryeti').checked) {
-            window.open(google + userEntry, '_blank');
-        }
-        if (document.getElementById('finvizcheck_tickeryeti').checked) {
-            window.open(finviz + userEntry, '_blank');
-        } 
-        if (document.getElementById('stanfordcheck_tickeryeti').checked) {
-            window.open(stanford, '_blank');
-        }
-        
     });
-
 });
