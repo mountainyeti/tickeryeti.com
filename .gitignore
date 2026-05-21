@@ -31,3 +31,7 @@ Temporary Items
 
 # Claude Code
 .claude/
+
+# Local dev servers
+node_modules/
+.DS_Store
