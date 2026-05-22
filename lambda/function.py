@@ -5,6 +5,7 @@ import urllib.request
 import urllib.error
 import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from datetime import datetime, timezone
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -56,11 +57,12 @@ def fmp(path):
 def fetch_all(sym):
     calls = {
         'profile':  f'/profile?symbol={sym}',
-        'history':  f'/historical-price-eod/light?symbol={sym}&limit=1260',
+        'history':  f'/historical-price-eod/light?symbol={sym}&limit=2520',
         'income':   f'/income-statement?symbol={sym}&limit=3',
         'balance':  f'/balance-sheet-statement?symbol={sym}&limit=3',
         'cashflow': f'/cash-flow-statement?symbol={sym}&limit=3',
         'metrics':  f'/key-metrics?symbol={sym}&limit=1',
+        'ratios':   f'/ratios?symbol={sym}&limit=1',
         'peers':    f'/stock-peers?symbol={sym}',
     }
     out = {}
@@ -95,6 +97,16 @@ def fmt_cap(v):
     if abs(v) >= 1e6:  return f'${v/1e6:.2f}M'
     return f'${v:,.0f}'
 
+def fmt_count(v):
+    try:
+        v = float(v)
+    except (TypeError, ValueError):
+        return '—'
+    if v == 0: return '—'
+    if abs(v) >= 1e9: return f'{v/1e9:.2f}B'
+    if abs(v) >= 1e6: return f'{v/1e6:.2f}M'
+    return f'{v:,.0f}'
+
 def fmt_num(v, dp=2):
     x = safe(v, 1, dp)
     return str(x) if x is not None else '—'
@@ -127,6 +139,7 @@ def build_response(sym):
     balance  = raw.get('balance')  or []
     cashflow = raw.get('cashflow') or []
     metrics  = (raw.get('metrics') or [{}])[0]
+    ratios   = (raw.get('ratios')  or [{}])[0]
     peers_raw = raw.get('peers')   or []
 
     if not profile.get('companyName'):
@@ -215,6 +228,7 @@ def build_response(sym):
             peers = (first.get('peersList') or [])[:8]
 
     return {
+        'as_of':        datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC'),
         'ticker':       sym,
         'name':         profile.get('companyName') or sym,
         'sector':       profile.get('sector') or '—',
@@ -232,12 +246,14 @@ def build_response(sym):
         'stats': {
             'mcap':         fmt_cap(mktcap),
             'smoothed_mcap': smoothed_mcap or '—',
-            'pe':           fmt_num(metrics.get('peRatio') or profile.get('pe'), 1),
-            'pb':           fmt_num(metrics.get('priceToBookRatio') or metrics.get('pbRatio'), 1),
-            'ps':           fmt_num(metrics.get('priceToSalesRatio'), 1),
-            'ev_ebitda':    fmt_num(metrics.get('evToEBITDA') or metrics.get('enterpriseValueOverEBITDA'), 1),
-            'shares':       fmt_cap(profile.get('sharesOutstanding')),
-            'avg_vol':      fmt_cap(profile.get('averageVolume') or profile.get('volAvg')),
+            'pe':           fmt_num(ratios.get('priceToEarningsRatio'), 1),
+            'pb':           fmt_num(ratios.get('priceToBookRatio'), 1),
+            'ps':           fmt_num(ratios.get('priceToSalesRatio'), 1),
+            'ev_ebitda':    fmt_num(metrics.get('evToEBITDA'), 1),
+            'shares':       fmt_count(profile.get('sharesOutstanding') or (float(mktcap)/float(profile.get('price')) if mktcap and profile.get('price') else None)),
+            'avg_vol':      fmt_count(profile.get('averageVolume') or profile.get('volAvg')),
+            'days_to_cover': '—',
+            'shares_short':  '—',
             'curr_ratio':   f'{curr_ratio}x' if curr_ratio else '—',
             'de_ratio':     str(de_ratio) if de_ratio else '—',
             'int_cov':      f'{int_cov}x' if int_cov else '—',

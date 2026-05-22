@@ -5,11 +5,10 @@
 const API_BASE = 'https://nlhh3rlzh9.execute-api.us-west-2.amazonaws.com';
 
 const TY_SITES = [
-  { id: 'yahoo',    label: 'Yahoo Finance',       url: t => `https://finance.yahoo.com/quote/${t}` },
-  { id: 'seeking',  label: 'Seeking Alpha',       url: t => `https://seekingalpha.com/symbol/${t}/earnings` },
-  { id: 'edgar',    label: 'SEC EDGAR',           url: t => `https://www.sec.gov/cgi-bin/browse-edgar?CIK=${t}&owner=exclude&action=getcompany` },
-  { id: 'finviz',   label: 'Finviz',              url: t => `https://finviz.com/quote.ashx?t=${t}` },
-  { id: 'stanford', label: 'Stanford Securities', url: _  => 'https://securities.stanford.edu/filings.html' },
+  { id: 'yahoo',   label: 'Yahoo Finance', url: t => `https://finance.yahoo.com/quote/${t}` },
+  { id: 'seeking', label: 'Seeking Alpha', url: t => `https://seekingalpha.com/symbol/${t}/earnings` },
+  { id: 'edgar',   label: 'SEC EDGAR',     url: t => `https://www.sec.gov/cgi-bin/browse-edgar?CIK=${t}&owner=exclude&action=getcompany` },
+  { id: 'finviz',  label: 'Finviz',        url: t => `https://finviz.com/quote.ashx?t=${t}` },
 ];
 
 // ============================================================
@@ -19,7 +18,7 @@ const TY_SITES = [
 const state = {
   company: null,
   range: '1y',
-  checks: { yahoo: true, seeking: true, edgar: true, finviz: true, stanford: false },
+  checks: { yahoo: true, seeking: true, edgar: true, finviz: true },
 };
 
 // ============================================================
@@ -92,7 +91,7 @@ function renderRecent() {
 // ============================================================
 
 function getChartSlice(series, range) {
-  const map = { '1y': 252, '2y': 504, '3y': 756, '5y': 1260 };
+  const map = { '1y': 252, '2y': 504, '3y': 756, '5y': 1260, '10y': 2520 };
   return series.slice(-Math.min(map[range] || 252, series.length));
 }
 
@@ -243,9 +242,10 @@ function renderDashboard(company) {
     `<div class="ty-price-now">${fmtPrice(last)}</div>` +
     `<div class="ty-price-chg ${chgUp ? 'up' : 'down'}">` +
       `<span class="arrow">${chgUp ? '▲' : '▼'}</span>` +
-      `${fmtPrice(Math.abs(last - yrAgo))} (${fmtPct(pct)}) · 1Y` +
+      `${fmtPrice(Math.abs(last - yrAgo))} (${fmtPct(pct)})` +
     '</div>' +
-    `<div class="small mt-1" style="opacity:0.78">52W: ${company.range_52w || '—'}</div>`;
+    `<div class="small mt-1" style="opacity:0.78">1 Year Period Performance</div>` +
+    `<div class="small mt-2" style="opacity:0.65">As Of: ${company.as_of || '—'}</div>`;
 
   // ── Chart ──────────────────────────────────────────────────────────────────
   document.getElementById('ty-chart-label').textContent = 'Price · ' + company.ticker;
@@ -255,21 +255,18 @@ function renderDashboard(company) {
   // ── Key Stock Data ─────────────────────────────────────────────────────────
   const st = company.stats || {};
   const stockCards = [
-    { label: 'Market Cap',     value: st.mcap,          sub: 'current' },
-    { label: 'Smoothed MCap',  value: st.smoothed_mcap, sub: '12-mo daily avg' },
-    { label: 'P/E (TTM)',      value: st.pe,            sub: 'trailing 12 mo' },
-    { label: 'P/B',            value: st.pb,            sub: 'book value' },
-    { label: 'P/S',            value: st.ps,            sub: 'price/sales' },
-    { label: 'EV/EBITDA',      value: st.ev_ebitda,     sub: 'enterprise value' },
-    { label: 'Shares Out.',    value: st.shares,        sub: 'outstanding' },
-    { label: 'Avg Daily Vol.', value: st.avg_vol,       sub: '10-day avg' },
+    { label: 'Market Cap',               value: st.mcap,          tip: 'Total market value of all outstanding shares at current price' },
+    { label: 'Smoothed Market Cap',      value: st.smoothed_mcap, tip: '12-month rolling daily mean market capitalization' },
+    { label: 'Avg Daily Trading Volume', value: st.avg_vol,       tip: 'Average number of shares traded per day over the past 10 days' },
+    { label: 'Days to Cover',            value: st.days_to_cover, tip: 'Short interest ratio: shares held short divided by average daily volume. Higher = more days to unwind short positions.' },
+    { label: 'Shares Held Short',        value: st.shares_short,  tip: 'Total number of shares currently sold short by investors betting the price will fall' },
+    { label: 'Total Shares Outstanding', value: st.shares,        tip: 'Total number of shares issued by the company and held by all shareholders' },
   ];
   document.getElementById('ty-stats-row').innerHTML = stockCards.map(c =>
-    '<div class="col-6 col-md-4 col-xl-3">' +
-      '<div class="ty-stat">' +
+    '<div class="col-6 col-md-4 col-xl-2">' +
+      `<div class="ty-stat" data-tip="${c.tip}">` +
         `<div class="ty-stat-label">${c.label}</div>` +
         `<div class="ty-stat-value">${c.value || '—'}</div>` +
-        `<div class="ty-stat-sub">${c.sub}</div>` +
       '</div>' +
     '</div>'
   ).join('');
@@ -279,9 +276,24 @@ function renderDashboard(company) {
 
   // ── Key Values ────────────────────────────────────────────────────────────
   document.getElementById('ty-key-values').innerHTML =
-    keyValueCard('Current Ratio',        st.curr_ratio, 'Current Assets / Current Liabilities') +
-    keyValueCard('Debt / Equity',        st.de_ratio,   'Total Debt / Stockholders Equity') +
-    keyValueCard('Interest Coverage',    st.int_cov,    'EBITDA / Interest Expense');
+    keyValueCard('Current Ratio',     st.curr_ratio, 'Current Assets ÷ Current Liabilities. Below 1.0 means current liabilities exceed current assets.') +
+    keyValueCard('Debt / Equity',     st.de_ratio,   'Total Debt ÷ Stockholders Equity. Higher values indicate more financial leverage.') +
+    keyValueCard('Interest Coverage', st.int_cov,    'EBITDA ÷ Interest Expense. Shows how easily the company can pay interest on its debt.');
+
+  // ── Valuation Ratios ──────────────────────────────────────────────────────
+  document.getElementById('ty-valuation').innerHTML =
+    keyValueCard('P/E Ratio', st.pe, 'Price ÷ Earnings Per Share. How much investors pay per dollar of earnings. Lower may indicate undervaluation.') +
+    keyValueCard('P/B Ratio', st.pb, 'Price ÷ Book Value Per Share. Compares market price to net asset value. Below 1.0 may indicate undervaluation.') +
+    keyValueCard('P/S Ratio', st.ps, 'Price ÷ Sales Per Share (Market Cap ÷ Revenue). Useful for companies with negative earnings.');
+
+  // ── Annual Update ─────────────────────────────────────────────────────────
+  document.getElementById('ty-annual-update').innerHTML =
+    '<ul class="mb-0" style="padding-left:1.2rem;line-height:1.8">' +
+    '<li><strong>Executive &amp; Corporate Governance:</strong> Executed key leadership transitions alongside target board committee refreshment frameworks to strengthen fiduciary tracking.</li>' +
+    '<li><strong>Reporting Framework Optimization:</strong> Implemented core segmentation restructures to isolate high-margin operations and provide heightened visibility into capital returns.</li>' +
+    '<li><strong>Product Deployment &amp; Strategy:</strong> Expanded addressable markets through deep technical rollouts matched to evolving customer demands.</li>' +
+    '<li><strong>Capital Allocation &amp; M&amp;A:</strong> Completed strategic balance sheet adjustments via disciplined transaction activity, including targeted bolt-on additions and non-core divestitures.</li>' +
+    '</ul>';
 
   // ── Peers ─────────────────────────────────────────────────────────────────
   document.getElementById('ty-peers-count').textContent = (company.peers || []).length + ' tickers';
@@ -316,12 +328,11 @@ function renderBizDesc(biz) {
     `">Show more…</button>`;
 }
 
-function keyValueCard(label, value, help) {
+function keyValueCard(label, value, tip) {
   return '<div class="col-md-4">' +
-    '<div class="ty-stat">' +
+    `<div class="ty-stat" data-tip="${tip}">` +
       `<div class="ty-stat-label">${label}</div>` +
       `<div class="ty-stat-value">${value || '—'}</div>` +
-      `<div class="ty-stat-sub">${help}</div>` +
     '</div>' +
   '</div>';
 }
@@ -412,7 +423,7 @@ function updateRangePerf(company) {
   const s = company.series || [];
   if (!s.length) { document.getElementById('ty-range-perf').textContent = ''; return; }
   const last = s[s.length - 1].p;
-  const map  = { '1y': 252, '2y': 504, '3y': 756, '5y': 1260 };
+  const map  = { '1y': 252, '2y': 504, '3y': 756, '5y': 1260, '10y': 2520 };
   const n    = Math.min(map[state.range] || 252, s.length);
   const start = s[s.length - n].p;
   document.getElementById('ty-range-perf').textContent =

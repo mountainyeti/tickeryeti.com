@@ -377,6 +377,33 @@ p { padding-top: 10px; }
 }
 .ty-empty p { font-size: 16px; }
 
+/* ---- stat card tooltips ---- */
+.ty-stat[data-tip] { cursor: default; }
+.ty-stat[data-tip]::before {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(14, 58, 82, 0.97);
+  color: #fff;
+  padding: 7px 11px;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.45;
+  width: max-content;
+  max-width: 240px;
+  white-space: normal;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .15s;
+  z-index: 200;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 4px 16px rgba(0,0,0,.25);
+}
+.ty-stat[data-tip]:hover::before { opacity: 1; }
+
 /* ---- financial statement tabs ---- */
 .ty-tabs {
   display: flex;
