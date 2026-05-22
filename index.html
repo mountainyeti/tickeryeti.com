@@ -150,8 +150,14 @@
       </div><!-- /ty-content -->
 
       <footer class="ty-foot">
-        <div>TickerYeti · Research, fast. &nbsp;·&nbsp; Data: Yahoo Finance &nbsp;·&nbsp; Financial Modeling Prep &nbsp;·&nbsp; Not investment advice.</div>
-        <a href="https://ko-fi.com/tickeryeti" target="_blank" rel="noopener" class="ty-foot-kofi" aria-label="Support TickerYeti on Ko-fi (opens in new tab)">🍺 Buy us a beer</a>
+        <div>
+          <div class="fw-semibold">TickerYeti &mdash; Research, fast.</div>
+          <div class="ty-foot-sub">Data: Yahoo Finance &amp; Financial Modeling Prep &nbsp;&middot;&nbsp; Not investment advice</div>
+        </div>
+        <div class="d-flex gap-2 align-items-center">
+          <a href="https://ko-fi.com/tickeryeti" target="_blank" rel="noopener" class="ty-foot-kofi" aria-label="Support TickerYeti on Ko-fi (opens in new tab)">🍺 Buy us a beer</a>
+          <button type="button" class="ty-foot-kofi" data-bs-toggle="modal" data-bs-target="#ty-feedback-modal">Leave feedback</button>
+        </div>
         <a href="https://www.linkedin.com/in/chadklein/" target="_blank" rel="noopener" class="ty-foot-brand" aria-label="Built by MountainStache (opens in new tab)">
           <img src="./images/mountainstache_brand.png" alt="Built by MountainStache" class="ty-foot-logo">
         </a>
@@ -160,5 +166,6 @@
 
   </main><!-- /main -->  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous" defer></script>
   <script src="tickeryeti.js" defer></script>
+  <script src="feedback.js" defer></script>
 </body>
 </html>

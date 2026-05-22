@@ -8,9 +8,15 @@ ROLE_NAME="tickeryeti-lambda-role"
 ROLE_ARN="arn:aws:iam::${ACCOUNT}:role/${ROLE_NAME}"
 if [ -z "$FMP_KEY" ]; then
   echo "Error: FMP_KEY environment variable not set."
-  echo "Usage: FMP_KEY=your_key bash deploy.sh"
+  echo "Usage: FMP_KEY=your_key GITHUB_TOKEN=your_token bash deploy.sh"
   exit 1
 fi
+if [ -z "$GITHUB_TOKEN" ]; then
+  echo "Error: GITHUB_TOKEN environment variable not set."
+  echo "Usage: FMP_KEY=your_key GITHUB_TOKEN=your_token bash deploy.sh"
+  exit 1
+fi
+ENV_VARS="Variables={FMP_KEY=${FMP_KEY},GITHUB_TOKEN=${GITHUB_TOKEN}}"
 
 cd "$(dirname "$0")"
 
@@ -47,7 +53,7 @@ if aws lambda get-function --function-name "$FUNCTION" --region "$REGION" &>/dev
   echo "    Updating environment variables..."
   aws lambda update-function-configuration \
     --function-name "$FUNCTION" \
-    --environment "Variables={FMP_KEY=${FMP_KEY}}" \
+    --environment "$ENV_VARS" \
     --region "$REGION" \
     --output text > /dev/null
 else
@@ -60,7 +66,7 @@ else
     --zip-file fileb://function.zip \
     --timeout 30 \
     --memory-size 256 \
-    --environment "Variables={FMP_KEY=${FMP_KEY}}" \
+    --environment "$ENV_VARS" \
     --region "$REGION" \
     --output text > /dev/null
   aws lambda wait function-active --function-name "$FUNCTION" --region "$REGION"

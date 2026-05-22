@@ -29,7 +29,7 @@ FMP_KEY  = os.environ['FMP_KEY']
 CORS = {
     'Access-Control-Allow-Origin':  '*',
     'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'GET, OPTIONS',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
     'Content-Type': 'application/json',
 }
 
@@ -39,6 +39,8 @@ def lambda_handler(event, context):
     method = (event.get('requestContext') or {}).get('http', {}).get('method', 'GET')
     if method == 'OPTIONS':
         return {'statusCode': 200, 'headers': CORS, 'body': ''}
+    if method == 'POST':
+        return handle_feedback(event)
     params = event.get('queryStringParameters') or {}
     sym = (params.get('ticker') or '').upper().strip()
     if not sym or not re.match(r'^[A-Z0-9.\-]{1,10}$', sym):
@@ -66,6 +68,61 @@ def lambda_handler(event, context):
 
 def err(code, msg):
     return {'statusCode': code, 'headers': CORS, 'body': json.dumps({'error': msg})}
+
+def handle_feedback(event):
+    import base64
+    raw = event.get('body') or ''
+    if event.get('isBase64Encoded'):
+        raw = base64.b64decode(raw).decode('utf-8')
+    try:
+        data = json.loads(raw)
+    except Exception:
+        return err(400, 'Invalid JSON')
+
+    # Honeypot — bots fill the hidden website field, humans don't
+    if data.get('website'):
+        return {'statusCode': 200, 'headers': CORS, 'body': json.dumps({'ok': True})}
+
+    message = (data.get('message') or '').strip()
+    if not message or len(message) < 5:
+        return err(400, 'Message too short')
+    if len(message) > 2000:
+        return err(400, 'Message too long')
+
+    ftype   = (data.get('type') or 'Feedback').strip()[:50]
+    name    = (data.get('name') or '').strip()[:100]
+    email   = (data.get('email') or '').strip()[:200]
+
+    token = os.environ.get('GITHUB_TOKEN')
+    if not token:
+        return err(500, 'Feedback not configured')
+
+    title = f'[{ftype}] {message[:60]}{"..." if len(message) > 60 else ""}'
+    lines = [f'**Type:** {ftype}', '', '**Message:**', message, '']
+    if name:
+        lines.append(f'**Name:** {name}')
+    if email:
+        lines.append(f'**Email:** {email}')
+    lines += ['', '*Submitted via tickeryeti.com feedback form*']
+
+    payload = json.dumps({'title': title, 'body': '\n'.join(lines)}).encode()
+    req = urllib.request.Request(
+        'https://api.github.com/repos/mountainyeti/tickeryeti.com/issues',
+        data=payload,
+        headers={
+            'Authorization': f'token {token}',
+            'Accept': 'application/vnd.github.v3+json',
+            'Content-Type': 'application/json',
+            'User-Agent': 'TickerYeti-Lambda',
+        }
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            issue = json.loads(resp.read())
+            return {'statusCode': 200, 'headers': CORS, 'body': json.dumps({'ok': True, 'issue': issue['number']})}
+    except urllib.error.HTTPError as e:
+        logger.error(f'GitHub API error: {e.code} {e.read()}')
+        return err(502, 'Could not submit feedback')
 
 class NotFound(Exception):
     pass
