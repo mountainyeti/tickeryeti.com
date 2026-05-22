@@ -555,10 +555,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const darkIcon = document.getElementById('ty-darkmode-icon');
   if (localStorage.getItem('ty_dark') === '1') {
     document.body.classList.add('ty-dark');
+    document.documentElement.classList.add('ty-dark');
     darkIcon.textContent = '☀️';
   }
   darkBtn.addEventListener('click', () => {
     const isDark = document.body.classList.toggle('ty-dark');
+    document.documentElement.classList.toggle('ty-dark', isDark);
     darkIcon.textContent = isDark ? '☀️' : '🌙';
     localStorage.setItem('ty_dark', isDark ? '1' : '0');
   });

@@ -506,7 +506,7 @@ p { padding-top: 10px; }
 .ty-darkmode-btn:hover { background: rgba(0,0,0,0.06); }
 
 /* ---- dark mode ---- */
-body.ty-dark { background: #0d1117; }
+html.ty-dark, body.ty-dark { background: #0d1117; }
 body.ty-dark .ty-form-card { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); }
 body.ty-dark .ty-card { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.12); }
 body.ty-dark .ty-stat { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.12); }
