@@ -407,12 +407,12 @@ function renderFinancials(company) {
         '<span class="small" style="opacity:.78">USD · annual (3yr)</span>' +
       '</div>' +
       '<div class="ty-card-body" style="padding-bottom:0">' +
-        '<div class="ty-tabs mb-3" id="ty-fin-tabs">' +
-          tabs.map((t, i) => `<button class="ty-tab${i===0?' active':''}" data-tab="${t.id}">${t.label}</button>`).join('') +
+        '<div class="ty-tabs mb-3" id="ty-fin-tabs" role="tablist" aria-label="Financial statements">' +
+          tabs.map((t, i) => `<button class="ty-tab${i===0?' active':''}" data-tab="${t.id}" role="tab" aria-selected="${i===0?'true':'false'}" aria-controls="ty-tab-${t.id}" id="ty-tabbtn-${t.id}">${t.label}</button>`).join('') +
         '</div>' +
         tabs.map((t, i) => {
           const rows = t.id === 'income' ? incRows : t.id === 'balance' ? balRows : cfRows;
-          return `<div id="ty-tab-${t.id}"${i > 0 ? ' style="display:none"' : ''}>` +
+          return `<div id="ty-tab-${t.id}" role="tabpanel" aria-labelledby="ty-tabbtn-${t.id}"${i > 0 ? ' style="display:none"' : ''}>` +
             buildFinTable(fin, yrs, rows) +
           '</div>';
         }).join('') +
@@ -422,8 +422,9 @@ function renderFinancials(company) {
   document.getElementById('ty-fin-tabs').addEventListener('click', e => {
     const btn = e.target.closest('.ty-tab');
     if (!btn) return;
-    document.querySelectorAll('.ty-tab').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.ty-tab').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
     btn.classList.add('active');
+    btn.setAttribute('aria-selected', 'true');
     tabs.forEach(t => {
       document.getElementById('ty-tab-' + t.id).style.display = btn.dataset.tab === t.id ? '' : 'none';
     });
