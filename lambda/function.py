@@ -3,9 +3,13 @@ import os
 import re
 import urllib.request
 import urllib.error
+import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-FMP_BASE = 'https://financialmodelingprep.com/api'
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
+FMP_BASE = 'https://financialmodelingprep.com/stable'
 FMP_KEY  = os.environ['FMP_KEY']
 
 CORS = {
@@ -51,13 +55,13 @@ def fmp(path):
 
 def fetch_all(sym):
     calls = {
-        'profile':  f'/v3/profile/{sym}',
-        'history':  f'/v3/historical-price-full/{sym}?timeseries=1260',
-        'income':   f'/v3/income-statement/{sym}?limit=3',
-        'balance':  f'/v3/balance-sheet-statement/{sym}?limit=3',
-        'cashflow': f'/v3/cash-flow-statement/{sym}?limit=3',
-        'metrics':  f'/v3/key-metrics/{sym}?limit=1',
-        'peers':    f'/v4/stock_peers?symbol={sym}',
+        'profile':  f'/profile?symbol={sym}',
+        'history':  f'/historical-price-eod/light?symbol={sym}&limit=1260',
+        'income':   f'/income-statement?symbol={sym}&limit=3',
+        'balance':  f'/balance-sheet-statement?symbol={sym}&limit=3',
+        'cashflow': f'/cash-flow-statement?symbol={sym}&limit=3',
+        'metrics':  f'/key-metrics?symbol={sym}&limit=1',
+        'peers':    f'/stock-peers?symbol={sym}',
     }
     out = {}
     with ThreadPoolExecutor(max_workers=7) as ex:
@@ -66,7 +70,8 @@ def fetch_all(sym):
             name = futs[fut]
             try:
                 out[name] = fut.result()
-            except Exception:
+            except Exception as e:
+                logger.error(f"FMP {name} failed: {type(e).__name__}: {e}")
                 out[name] = None
     return out
 
@@ -117,7 +122,7 @@ def build_response(sym):
     raw = fetch_all(sym)
 
     profile  = (raw.get('profile')  or [{}])[0]
-    hist_raw = (raw.get('history')  or {}).get('historical', [])
+    hist_raw = raw.get('history') or []
     income   = raw.get('income')   or []
     balance  = raw.get('balance')  or []
     cashflow = raw.get('cashflow') or []
@@ -130,7 +135,7 @@ def build_response(sym):
     # ── Price series (chronological) ──────────────────────────────────────────
     series = []
     for h in reversed(hist_raw):
-        p = h.get('adjClose') or h.get('close')
+        p = h.get('price') or h.get('adjClose') or h.get('close')
         v = h.get('volume', 0)
         if p:
             series.append({'d': h['date'], 'p': round(float(p), 2), 'v': int(v or 0)})
@@ -142,16 +147,16 @@ def build_response(sym):
         bal = balance[i] if i < len(balance)  else {}
         cf  = cashflow[i] if i < len(cashflow) else {}
 
-        yr = (inc.get('calendarYear') or
+        yr = (inc.get('fiscalYear') or inc.get('calendarYear') or
               str(inc.get('date', ''))[:4] or
               str(bal.get('date', ''))[:4] or '—')
 
-        ebitda_v   = safe(inc.get('ebitda'), 1e-9)
+        ebitda_v   = safe(inc.get('ebitda') or inc.get('operatingIncome'), 1e-9)
         int_exp_v  = safe(inc.get('interestExpense'), 1e-9)
         curr_ast_v = safe(bal.get('totalCurrentAssets'), 1e-9)
         curr_lib_v = safe(bal.get('totalCurrentLiabilities'), 1e-9)
-        equity_v   = safe(bal.get('totalStockholdersEquity'), 1e-9)
-        debt_v     = safe(bal.get('totalDebt'), 1e-9)
+        equity_v   = safe(bal.get('totalStockholdersEquity') or bal.get('totalEquity'), 1e-9)
+        debt_v     = safe(bal.get('totalDebt') or bal.get('longTermDebt'), 1e-9)
         assets_v   = safe(bal.get('totalAssets'), 1e-9)
         goodwill_v = safe(bal.get('goodwill') or bal.get('goodwillAndIntangibleAssets'), 1e-9)
         gw_pct     = round(goodwill_v / assets_v * 100, 1) if goodwill_v and assets_v else None
@@ -181,9 +186,9 @@ def build_response(sym):
     int_cov      = round(recent['ebitda'] / abs(recent['int_exp']), 2)   if (recent.get('ebitda') and recent.get('int_exp') and recent['int_exp'] != 0) else None
 
     # ── Stats ─────────────────────────────────────────────────────────────────
-    mktcap   = profile.get('mktCap') or metrics.get('marketCap')
+    mktcap   = profile.get('marketCap') or profile.get('mktCap') or metrics.get('marketCap')
     country  = profile.get('country') or 'US'
-    state_raw = profile.get('state') or ''
+    state_raw = profile.get('state') or profile.get('stateOfIncorporation') or ''
     if country.upper() in ('US', 'USA', 'UNITED STATES'):
         jurisdiction = STATE_MAP.get(str(state_raw).upper().strip(), state_raw) or '—'
     else:
@@ -192,7 +197,8 @@ def build_response(sym):
     ipo_year = str(profile.get('ipoDate') or '')[:4] or '—'
 
     # Smoothed market cap: average of 252 most recent daily close × shares
-    shares = profile.get('sharesOutstanding') or safe(mktcap, 1) / safe(profile.get('price'), 1) if profile.get('price') else 0
+    price_now = profile.get('price') or 0
+    shares = profile.get('sharesOutstanding') or (float(mktcap) / float(price_now) if mktcap and price_now else 0)
     smoothed_mcap = None
     if series and shares:
         window = series[-252:]
@@ -201,7 +207,12 @@ def build_response(sym):
     # ── Peers ─────────────────────────────────────────────────────────────────
     peers = []
     if isinstance(peers_raw, list) and peers_raw:
-        peers = (peers_raw[0].get('peersList') or [])[:8]
+        first = peers_raw[0]
+        # stable endpoint returns [{symbol, companyName, price, mktCap}, ...]
+        if isinstance(first, dict) and 'symbol' in first:
+            peers = [p['symbol'] for p in peers_raw if p.get('symbol') != sym][:8]
+        else:
+            peers = (first.get('peersList') or [])[:8]
 
     return {
         'ticker':       sym,
@@ -221,12 +232,12 @@ def build_response(sym):
         'stats': {
             'mcap':         fmt_cap(mktcap),
             'smoothed_mcap': smoothed_mcap or '—',
-            'pe':           fmt_num(metrics.get('peRatio'), 1),
-            'pb':           fmt_num(metrics.get('pbRatio'), 1),
+            'pe':           fmt_num(metrics.get('peRatio') or profile.get('pe'), 1),
+            'pb':           fmt_num(metrics.get('priceToBookRatio') or metrics.get('pbRatio'), 1),
             'ps':           fmt_num(metrics.get('priceToSalesRatio'), 1),
-            'ev_ebitda':    fmt_num(metrics.get('enterpriseValueOverEBITDA'), 1),
+            'ev_ebitda':    fmt_num(metrics.get('evToEBITDA') or metrics.get('enterpriseValueOverEBITDA'), 1),
             'shares':       fmt_cap(profile.get('sharesOutstanding')),
-            'avg_vol':      fmt_cap(profile.get('volAvg')),
+            'avg_vol':      fmt_cap(profile.get('averageVolume') or profile.get('volAvg')),
             'curr_ratio':   f'{curr_ratio}x' if curr_ratio else '—',
             'de_ratio':     str(de_ratio) if de_ratio else '—',
             'int_cov':      f'{int_cov}x' if int_cov else '—',

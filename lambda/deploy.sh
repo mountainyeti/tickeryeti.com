@@ -6,7 +6,11 @@ REGION="us-west-2"
 ACCOUNT="141242608176"
 ROLE_NAME="tickeryeti-lambda-role"
 ROLE_ARN="arn:aws:iam::${ACCOUNT}:role/${ROLE_NAME}"
-FMP_KEY="${FMP_KEY:-678e882c6502dd2fe698fe5c08a31b956098b2cc2395667db92231789b76ef14}"
+if [ -z "$FMP_KEY" ]; then
+  echo "Error: FMP_KEY environment variable not set."
+  echo "Usage: FMP_KEY=your_key bash deploy.sh"
+  exit 1
+fi
 
 cd "$(dirname "$0")"
 
