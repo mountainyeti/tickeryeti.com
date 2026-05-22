@@ -25,6 +25,7 @@ p { padding-top: 10px; }
 .custom-jumbotron { background: transparent !important; }
 
 /* ---- navbar ---- */
+#ty-navbar { position: sticky; top: 0; z-index: 1030; }
 .ty-navbar { padding: 18px 0; }
 
 .ty-brand {

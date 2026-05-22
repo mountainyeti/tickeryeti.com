@@ -323,15 +323,6 @@ function renderDashboard(company) {
     keyValueCard('P/B Ratio', st.pb, 'Price ÷ Book Value Per Share. Compares market price to net asset value. Below 1.0 may indicate undervaluation.') +
     keyValueCard('P/S Ratio', st.ps, 'Price ÷ Sales Per Share (Market Cap ÷ Revenue). Useful for companies with negative earnings.');
 
-  // ── Annual Update ─────────────────────────────────────────────────────────
-  document.getElementById('ty-annual-update').innerHTML =
-    '<ul class="mb-0" style="padding-left:1.2rem;line-height:1.8">' +
-    '<li><strong>Executive &amp; Corporate Governance:</strong> Executed key leadership transitions alongside target board committee refreshment frameworks to strengthen fiduciary tracking.</li>' +
-    '<li><strong>Reporting Framework Optimization:</strong> Implemented core segmentation restructures to isolate high-margin operations and provide heightened visibility into capital returns.</li>' +
-    '<li><strong>Product Deployment &amp; Strategy:</strong> Expanded addressable markets through deep technical rollouts matched to evolving customer demands.</li>' +
-    '<li><strong>Capital Allocation &amp; M&amp;A:</strong> Completed strategic balance sheet adjustments via disciplined transaction activity, including targeted bolt-on additions and non-core divestitures.</li>' +
-    '</ul>';
-
   // ── Peers ─────────────────────────────────────────────────────────────────
   document.getElementById('ty-peers-count').textContent = (company.peers || []).length + ' tickers';
   const peersBody = document.getElementById('ty-peers-body');
