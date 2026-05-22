@@ -1,82 +1,392 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VXS96WNXCF"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-VXS96WNXCF');
-    </script>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="styles.css">
-    <link rel="shortcut icon" href="./images/tickeryeti_favicon.png"/>
-    <title>TickerYeti | Help</title>
-  </head>
+<head>
+  <script>if(localStorage.getItem('ty_dark')==='1')document.documentElement.classList.add('ty-dark');</script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VXS96WNXCF"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-VXS96WNXCF');
+  </script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="shortcut icon" href="./images/tickeryeti_favicon.png">
+  <title>TickerYeti | Help</title>
+</head>
+<body>
 
-  <body>
+  <!-- Nav — matches index.html -->
+  <nav class="navbar navbar-expand-md navbar-light sticky-top" style="background-color: #ffffff;">
     <div class="container">
-      <nav class="navbar navbar-expand-md navbar-light sticky-top" style="background-color: #ffffff;">
-        <div class="container-fluid">
-          <a class="navbar-brand tickeryeti_brand" href="index.html"><img src="./images/tickeryeti_face_brand.png"> TickerYeti</a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto">
-              <li class="nav-item">
-                <a class="nav-link" href="index.html">Yeti</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="mailto:chad@mountainstache.com?Subject=TickerYeti%20Contact">Contact</a>
-              </li>
-            </ul>
-            <ul class="navbar-nav ms-auto">
-              <li class="nav-item">
-                <img class="navbar-brand" src="./images/mountainstache_brand.png">
-              </li>
-            </ul>
-          </div>
+      <a class="navbar-brand tickeryeti_brand" href="index.html">
+        <img src="./images/tickeryeti_face_brand.png" height="30" alt=""> TickerYeti
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarContent">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="help.html">Help</a></li>
+          <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+        </ul>
+        <div class="d-flex align-items-center ms-3" title="Toggle dark mode">
+          <label class="ty-darkmode-switch">
+            <input type="checkbox" id="ty-darkmode-toggle">
+            <span class="ty-darkmode-slider"></span>
+          </label>
         </div>
-      </nav>
-    </div>
-    <div class="container">
-      <div class="jumbotron jumbotron-fluid">
-        <h1 class="display-3">I can't get this darn thing to work!</h1>
-        <hr class="my-4">
-        <h3>It's easy, here's how to Yeti:</h3>
-        <p class="lead">Just put any stock ticker symbol in the box and hit 'Yeti'. TickerYeti will open up new tabs for the ticker in each of the sources you selected.</p>
-        <p class="lead">You can un-check sources if you would prefer not to have those tabs open. The Stanford Securities Class Action Lawsuit Search will not open a search for the ticker you selected, but if you check that option TickerYeti will open up the search homepage for you. You can also click the link to the Stanford CALS site.</p>
-        <p class="lead">
-          <a class="btn btn-secondary btn-lg" href="index.html" role="button">Back to Yeti</a>
-        </p>
-        <hr class="my-4">
-        <h3>It only opens one tab. What gives?</h3>
-        <p class="lead">Generally people dislike pop-ups from websites so most browsers these days try to help people by blocking them. Sometimes while blocking pop-ups, the browser will think that TickerYeti is opening a bunch of them, and only allow the first one to open. To fix this you will need to go into your browser settings and allow pop-ups from tickeryeti.com.</p>
-        <p class="lead">Here's what you would do in Chrome to allow pop-ups from TickerYeti:</p>
-        <div class="row">
-          <div class="col-md-4">
-            <p class="text-center">Click the little red 'x' thingy on the far right side of the address bar.</p>
-            <img src="./images/popup_end.jpg" class="img-fluid rounded mx-auto d-block">
-          </div>
-          <div class="col-md-4">
-            <p class="text-center">Now in the dropdown, select the radial button next to 'Always allow pop-ups from https://tickeryeti.com'</p>
-            <img src="./images/popups_blocked.jpg" class="img-fluid rounded mx-auto d-block">
-          </div>
-          <div class="col-md-4">
-            <p class="text-center">Then click 'Done'!</p>
-            <img src="./images/popups_done.jpg" class="img-fluid rounded mx-auto d-block">
-          </div>
-        </div>
-        <p class="lead">If you don't have Chrome browser, you're making mistakes in your life. You're on your own for figuring out how to stop blocking pop-ups from TickerYeti! Godspeed.</p>
-        <p class="lead">
-          <a class="btn btn-secondary btn-lg" href="index.html" role="button">Back to Yeti</a>
-        </p>
-        <hr class="my-4">
       </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous" defer></script>
-  </body>
+  </nav>
+
+  <div class="container py-4">
+
+    <!-- Page header -->
+    <div class="mb-5">
+      <h1 class="fw-bold mb-2" style="font-size:32px;letter-spacing:-0.02em">How to use TickerYeti</h1>
+      <p class="mb-0" style="opacity:.82;font-size:16px;max-width:60ch">A fast stock research dashboard. Type a ticker, hit Yeti, and get price history, financials, and direct links to your favorite research sources — all in one place.</p>
+    </div>
+
+    <!-- 1. Search -->
+    <div class="ty-card mb-4">
+      <div class="ty-card-head">
+        <h2 class="ty-card-title">1 &mdash; Search</h2>
+      </div>
+      <div class="ty-card-body">
+        <p class="mb-2">Type any US stock ticker symbol into the search box — for example <strong>AAPL</strong>, <strong>TSLA</strong>, or <strong>NVDA</strong> — then click the <strong>Yeti</strong> button (or press <kbd style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);border-radius:4px;padding:1px 6px;font-size:13px">Enter</kbd>). The full research dashboard loads below the search form.</p>
+        <p class="mb-0" style="opacity:.82">Ticker symbols are not case-sensitive — <em>aapl</em> and <em>AAPL</em> both work.</p>
+      </div>
+    </div>
+
+    <!-- 2. Recent Tickers -->
+    <div class="ty-card mb-4">
+      <div class="ty-card-head">
+        <h2 class="ty-card-title">2 &mdash; Recent Tickers</h2>
+      </div>
+      <div class="ty-card-body">
+        <p class="mb-2">Just below the search form, TickerYeti shows a row of chips labelled <strong>Recent</strong>. These are the last six tickers you looked up (or a set of popular defaults the first time you visit).</p>
+        <p class="mb-0" style="opacity:.82">Click any chip to instantly reload that company's full dashboard — no need to type the ticker again. Your history is saved in your browser's local storage, so it persists between visits.</p>
+      </div>
+    </div>
+
+    <!-- 3. Price Chart -->
+    <div class="ty-card mb-4">
+      <div class="ty-card-head">
+        <h2 class="ty-card-title">3 &mdash; Price Chart</h2>
+      </div>
+      <div class="ty-card-body">
+        <p class="mb-3">The chart shows two layers of data plotted together:</p>
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <div class="ty-stat" style="height:auto">
+              <div class="ty-stat-label">Price line</div>
+              <p class="mb-0" style="font-size:14px;line-height:1.55">The white line traces the daily closing price over the selected time range. A shaded gradient beneath the line makes the trend easier to read at a glance.</p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="ty-stat" style="height:auto">
+              <div class="ty-stat-label">Volume bars</div>
+              <p class="mb-0" style="font-size:14px;line-height:1.55">Semi-transparent bars at the bottom of the chart show daily trading volume. Taller bars mean heavier trading activity on that day.</p>
+            </div>
+          </div>
+        </div>
+        <p class="mb-2"><strong>Hover to inspect any day.</strong> Move your cursor over the chart and a tooltip appears showing the exact date, closing price, and trading volume for that data point. A vertical crosshair line and dot mark the position on the price line.</p>
+        <p class="mb-3"><strong>Change the time range</strong> using the button group at the top-right of the chart card:</p>
+        <div class="d-flex flex-wrap gap-2 mb-3">
+          <span class="ty-check on" style="pointer-events:none"><span class="ty-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></span>1Y &mdash; 1 year (default)</span>
+          <span class="ty-check on" style="pointer-events:none"><span class="ty-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></span>2Y &mdash; 2 years</span>
+          <span class="ty-check on" style="pointer-events:none"><span class="ty-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></span>3Y &mdash; 3 years</span>
+          <span class="ty-check on" style="pointer-events:none"><span class="ty-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></span>5Y &mdash; 5 years</span>
+          <span class="ty-check on" style="pointer-events:none"><span class="ty-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></span>10Y &mdash; 10 years</span>
+        </div>
+        <p class="mb-0" style="opacity:.82">The label below the chart updates to show the percentage gain or loss over the currently selected range (e.g. <em>+42.7% over 1Y</em>).</p>
+      </div>
+    </div>
+
+    <!-- 4. Key Stock Data -->
+    <div class="ty-card mb-4">
+      <div class="ty-card-head">
+        <h2 class="ty-card-title">4 &mdash; Key Stock Data</h2>
+      </div>
+      <div class="ty-card-body">
+        <p class="mb-3">Six stat cards appear below the chart. <strong>Hover any card</strong> to see a tooltip explaining what the metric means.</p>
+        <div class="row g-3">
+          <div class="col-6 col-md-4">
+            <div class="ty-stat" data-tip="Total market value of all outstanding shares at current price">
+              <div class="ty-stat-label">Market Cap</div>
+              <div style="font-size:14px;line-height:1.5;margin-top:6px;opacity:.85">Current share price multiplied by total shares outstanding.</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-4">
+            <div class="ty-stat" data-tip="12-month rolling daily mean market capitalization">
+              <div class="ty-stat-label">Smoothed Market Cap</div>
+              <div style="font-size:14px;line-height:1.5;margin-top:6px;opacity:.85">12-month rolling average of daily market cap — filters out short-term price spikes.</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-4">
+            <div class="ty-stat" data-tip="Average number of shares traded per day over the past 10 days">
+              <div class="ty-stat-label">Avg Daily Trading Volume</div>
+              <div style="font-size:14px;line-height:1.5;margin-top:6px;opacity:.85">How many shares change hands on a typical trading day.</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-4">
+            <div class="ty-stat" data-tip="Short interest ratio: shares held short divided by average daily volume. Higher = more days to unwind short positions.">
+              <div class="ty-stat-label">Days to Cover</div>
+              <div style="font-size:14px;line-height:1.5;margin-top:6px;opacity:.85">Short interest divided by average daily volume. Higher numbers mean more bearish pressure takes longer to unwind.</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-4">
+            <div class="ty-stat" data-tip="Total number of shares currently sold short by investors betting the price will fall">
+              <div class="ty-stat-label">Shares Held Short</div>
+              <div style="font-size:14px;line-height:1.5;margin-top:6px;opacity:.85">How many shares are currently being bet against by short-sellers.</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-4">
+            <div class="ty-stat" data-tip="Total number of shares issued by the company and held by all shareholders">
+              <div class="ty-stat-label">Total Shares Outstanding</div>
+              <div style="font-size:14px;line-height:1.5;margin-top:6px;opacity:.85">Total shares in existence, including those held by insiders and institutional investors.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. Financial Statements -->
+    <div class="ty-card mb-4">
+      <div class="ty-card-head">
+        <h2 class="ty-card-title">5 &mdash; Financial Statements</h2>
+        <span class="small" style="opacity:.78">3 years of annual data</span>
+      </div>
+      <div class="ty-card-body">
+        <p class="mb-3">Three years of annual financial data are presented in a tabbed table. Click the tabs to switch between statements:</p>
+        <div class="row g-3 mb-4">
+          <div class="col-md-4">
+            <div class="ty-stat" style="height:auto">
+              <div class="ty-stat-label">Income Statement</div>
+              <ul class="mb-0 mt-2" style="font-size:14px;line-height:1.8;padding-left:1.1rem;">
+                <li>Revenue</li>
+                <li>Net Income</li>
+                <li>EPS (diluted)</li>
+                <li>EBITDA</li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="ty-stat" style="height:auto">
+              <div class="ty-stat-label">Balance Sheet</div>
+              <ul class="mb-0 mt-2" style="font-size:14px;line-height:1.8;padding-left:1.1rem;">
+                <li>Total Assets</li>
+                <li>Cash &amp; Equivalents</li>
+                <li>Total Debt</li>
+                <li>Stockholders Equity</li>
+                <li>Goodwill</li>
+                <li>Goodwill % of Assets</li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="ty-stat" style="height:auto">
+              <div class="ty-stat-label">Cash Flow</div>
+              <ul class="mb-0 mt-2" style="font-size:14px;line-height:1.8;padding-left:1.1rem;">
+                <li>Operating Cash Flow</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <p class="mb-0" style="opacity:.82">Each value column includes a <strong>year-over-year percentage change badge</strong> so you can spot growth or decline at a glance. Green-tinted badges indicate positive change; muted badges indicate negative change.</p>
+      </div>
+    </div>
+
+    <!-- 6. Key Values -->
+    <div class="ty-card mb-4">
+      <div class="ty-card-head">
+        <h2 class="ty-card-title">6 &mdash; Key Values</h2>
+      </div>
+      <div class="ty-card-body">
+        <p class="mb-3">Three ratio cards based on the most recent fiscal year. Hover any card for a definition tooltip.</p>
+        <div class="row g-3">
+          <div class="col-md-4">
+            <div class="ty-stat" data-tip="Current Assets ÷ Current Liabilities. Below 1.0 means current liabilities exceed current assets.">
+              <div class="ty-stat-label">Current Ratio</div>
+              <div style="font-size:14px;line-height:1.5;margin-top:6px;opacity:.85">Current Assets divided by Current Liabilities. A ratio above 1.0 means the company can cover its near-term obligations.</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="ty-stat" data-tip="Total Debt ÷ Stockholders Equity. Higher values indicate more financial leverage.">
+              <div class="ty-stat-label">Debt / Equity</div>
+              <div style="font-size:14px;line-height:1.5;margin-top:6px;opacity:.85">Total Debt divided by Stockholders Equity. Indicates how much the company relies on debt financing relative to shareholder funds.</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="ty-stat" data-tip="EBITDA ÷ Interest Expense. Shows how easily the company can pay interest on its debt.">
+              <div class="ty-stat-label">Interest Coverage</div>
+              <div style="font-size:14px;line-height:1.5;margin-top:6px;opacity:.85">EBITDA divided by Interest Expense. Higher values mean the company comfortably covers its debt interest payments.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. Valuation Ratios -->
+    <div class="ty-card mb-4">
+      <div class="ty-card-head">
+        <h2 class="ty-card-title">7 &mdash; Valuation Ratios</h2>
+      </div>
+      <div class="ty-card-body">
+        <p class="mb-3">Three valuation multiples based on the most recent fiscal year. Hover any card for a definition tooltip.</p>
+        <div class="row g-3">
+          <div class="col-md-4">
+            <div class="ty-stat" data-tip="Price ÷ Earnings Per Share. How much investors pay per dollar of earnings. Lower may indicate undervaluation.">
+              <div class="ty-stat-label">P/E Ratio</div>
+              <div style="font-size:14px;line-height:1.5;margin-top:6px;opacity:.85">Price divided by Earnings Per Share. How much investors are paying for each dollar of annual profit.</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="ty-stat" data-tip="Price ÷ Book Value Per Share. Compares market price to net asset value. Below 1.0 may indicate undervaluation.">
+              <div class="ty-stat-label">P/B Ratio</div>
+              <div style="font-size:14px;line-height:1.5;margin-top:6px;opacity:.85">Price divided by Book Value Per Share. Compares the market's valuation to the company's net asset value on its books.</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="ty-stat" data-tip="Price ÷ Sales Per Share (Market Cap ÷ Revenue). Useful for companies with negative earnings.">
+              <div class="ty-stat-label">P/S Ratio</div>
+              <div style="font-size:14px;line-height:1.5;margin-top:6px;opacity:.85">Market Cap divided by Revenue. Useful for evaluating companies that are not yet profitable.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8. Annual Update -->
+    <div class="ty-card mb-4">
+      <div class="ty-card-head">
+        <h2 class="ty-card-title">8 &mdash; Annual Update</h2>
+      </div>
+      <div class="ty-card-body">
+        <p class="mb-0" style="opacity:.82">A corporate summary section covering key themes from the company's most recent annual reporting period: leadership and governance, reporting structure, product strategy, and capital allocation activity. A quick narrative overview to complement the numbers above.</p>
+      </div>
+    </div>
+
+    <!-- 9. Peers & Competitors -->
+    <div class="ty-card mb-4">
+      <div class="ty-card-head">
+        <h2 class="ty-card-title">9 &mdash; Peers &amp; Competitors</h2>
+      </div>
+      <div class="ty-card-body">
+        <p class="mb-2">A set of clickable ticker chips listing companies in the same sector or competitive space. Click any peer chip to load that company's full dashboard instantly — the search box updates and the page scrolls to the new results.</p>
+        <p class="mb-0" style="opacity:.82">If no peers are on file for a particular ticker, use the Research Avalanche (below) to explore competitive landscape data on external sources.</p>
+      </div>
+    </div>
+
+    <!-- 10. Research Avalanche -->
+    <div class="ty-card mb-4">
+      <div class="ty-card-head">
+        <h2 class="ty-card-title">10 &mdash; Research Avalanche</h2>
+      </div>
+      <div class="ty-card-body">
+        <p class="mb-3">The Research Avalanche opens a batch of research sources in new browser tabs simultaneously, all pre-loaded with the ticker you're researching. It's the fastest way to kick off a deep-dive.</p>
+        <p class="mb-2"><strong>How to use it:</strong></p>
+        <ol style="font-size:15px;line-height:1.9;padding-left:1.3rem;" class="mb-3">
+          <li>Check or uncheck the source pills to choose which sites to open. All four are checked by default.</li>
+          <li>Click the <strong>Research Avalanche</strong> button.</li>
+          <li>New tabs open for each checked source, pre-loaded with your ticker.</li>
+        </ol>
+        <p class="mb-2">The four available sources are:</p>
+        <div class="row g-3 mb-0">
+          <div class="col-sm-6 col-lg-3">
+            <div class="ty-stat" style="height:auto">
+              <div class="ty-stat-label">Yahoo Finance</div>
+              <div style="font-size:14px;line-height:1.5;margin-top:6px;opacity:.85">Quote page with price, news, and analyst estimates.</div>
+            </div>
+          </div>
+          <div class="col-sm-6 col-lg-3">
+            <div class="ty-stat" style="height:auto">
+              <div class="ty-stat-label">Seeking Alpha</div>
+              <div style="font-size:14px;line-height:1.5;margin-top:6px;opacity:.85">Earnings transcripts, analyst ratings, and community analysis.</div>
+            </div>
+          </div>
+          <div class="col-sm-6 col-lg-3">
+            <div class="ty-stat" style="height:auto">
+              <div class="ty-stat-label">SEC EDGAR</div>
+              <div style="font-size:14px;line-height:1.5;margin-top:6px;opacity:.85">Official SEC filings: 10-K, 10-Q, 8-K, proxy statements, and more.</div>
+            </div>
+          </div>
+          <div class="col-sm-6 col-lg-3">
+            <div class="ty-stat" style="height:auto">
+              <div class="ty-stat-label">Finviz</div>
+              <div style="font-size:14px;line-height:1.5;margin-top:6px;opacity:.85">Technical charts, fundamental data, and insider transaction heatmaps.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 11. Dark Mode -->
+    <div class="ty-card mb-4">
+      <div class="ty-card-head">
+        <h2 class="ty-card-title">11 &mdash; Dark Mode</h2>
+      </div>
+      <div class="ty-card-body">
+        <p class="mb-2">Use the <strong>toggle switch</strong> in the top-right corner of the navbar to switch between light and dark mode. TickerYeti remembers your preference — it's saved in your browser and applied automatically on every visit, with no flash of the wrong theme on load.</p>
+        <p class="mb-0" style="opacity:.82">The switch glows blue when dark mode is active.</p>
+      </div>
+    </div>
+
+    <!-- 12. Pop-up Blocking -->
+    <div class="ty-card mb-4">
+      <div class="ty-card-head">
+        <h2 class="ty-card-title">12 &mdash; Pop-up Blocking &amp; Research Avalanche</h2>
+      </div>
+      <div class="ty-card-body">
+        <p class="mb-2">Browsers block multiple tabs opening at once because they treat them like pop-ups. When you click Research Avalanche, your browser may only allow the first tab to open and silently block the rest.</p>
+        <p class="mb-3">To fix this, you need to allow pop-ups from <strong>tickeryeti.com</strong>. Here's how to do it in Chrome:</p>
+        <div class="row g-4 mb-3">
+          <div class="col-md-4">
+            <p class="mb-2 text-center fw-semibold" style="font-size:14px">Step 1 &mdash; Click the blocked pop-ups icon on the right side of the address bar.</p>
+            <img src="./images/popup_end.jpg" class="img-fluid rounded mx-auto d-block" alt="Blocked pop-ups icon in Chrome address bar">
+          </div>
+          <div class="col-md-4">
+            <p class="mb-2 text-center fw-semibold" style="font-size:14px">Step 2 &mdash; Select "Always allow pop-ups from https://tickeryeti.com".</p>
+            <img src="./images/popups_blocked.jpg" class="img-fluid rounded mx-auto d-block" alt="Chrome pop-up permission dropdown">
+          </div>
+          <div class="col-md-4">
+            <p class="mb-2 text-center fw-semibold" style="font-size:14px">Step 3 &mdash; Click Done. Research Avalanche will now open all tabs.</p>
+            <img src="./images/popups_done.jpg" class="img-fluid rounded mx-auto d-block" alt="Chrome pop-up permission done">
+          </div>
+        </div>
+        <p class="mb-0" style="opacity:.82">On other browsers the steps are similar — look for a blocked pop-ups notification in the address bar and add an exception for tickeryeti.com.</p>
+      </div>
+    </div>
+
+    <div class="mb-2">
+      <a href="index.html" class="ty-btn-yeti" style="text-decoration:none;display:inline-flex">Back to TickerYeti</a>
+    </div>
+
+    <footer class="ty-foot">
+      <div>TickerYeti · Research, fast. &nbsp;·&nbsp; Data: Yahoo Finance &nbsp;·&nbsp; Financial Modeling Prep &nbsp;·&nbsp; Not investment advice.</div>
+      <a href="https://www.linkedin.com/in/chadklein/" target="_blank" rel="noopener" class="ty-foot-brand">
+        <img src="./images/mountainstache_brand.png" alt="Built by MountainStache" class="ty-foot-logo">
+      </a>
+    </footer>
+
+  </div><!-- /container -->
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous" defer></script>
+  <script>
+    const t = document.getElementById('ty-darkmode-toggle');
+    if (t) {
+      t.checked = localStorage.getItem('ty_dark') === '1';
+      if (t.checked) { document.body.classList.add('ty-dark'); document.documentElement.classList.add('ty-dark'); }
+      t.addEventListener('change', () => {
+        const d = t.checked;
+        document.body.classList.toggle('ty-dark', d);
+        document.documentElement.classList.toggle('ty-dark', d);
+        localStorage.setItem('ty_dark', d ? '1' : '0');
+      });
+    }
+  </script>
+</body>
 </html>
