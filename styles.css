@@ -485,5 +485,8 @@ p { padding-top: 10px; }
   gap: 12px;
 }
 .ty-foot-brand { display: inline-flex; align-items: center; opacity: 0.85; transition: opacity .15s; }
+
+/* ---- hero yeti image ---- */
+.ty-hero-img { max-height: 240px; object-fit: contain; }
 .ty-foot-brand:hover { opacity: 1; }
 .ty-foot-logo { height: 28px; width: auto; }
