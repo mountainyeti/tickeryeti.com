@@ -43,16 +43,20 @@ def lambda_handler(event, context):
     sym = (params.get('ticker') or '').upper().strip()
     if not sym or not re.match(r'^[A-Z0-9.\-]{1,10}$', sym):
         return err(400, 'Invalid ticker symbol')
+    period = params.get('period') or '5y'
+    if period not in ('5y', '10y'):
+        period = '5y'
+    cache_key = sym if period == '5y' else f'{sym}:10y'
     try:
         # Serve from cache if fresh
-        cached = _cache.get(sym)
+        cached = _cache.get(cache_key)
         if cached and time.time() - cached[0] < CACHE_TTL:
-            logger.info(f'Cache hit: {sym}')
+            logger.info(f'Cache hit: {cache_key}')
             return {'statusCode': 200, 'headers': CORS, 'body': cached[1]}
 
-        data = build_response(sym)
+        data = build_response(sym, period)
         body = json.dumps(data)
-        _cache[sym] = (time.time(), body)
+        _cache[cache_key] = (time.time(), body)
         return {'statusCode': 200, 'headers': CORS, 'body': body}
     except NotFound:
         return err(404, f'No data found for {sym}')
@@ -170,12 +174,12 @@ def _yf_peers(sym):
 
 # ── Main ───────────────────────────────────────────────────────────────────────
 
-def build_response(sym):
+def build_response(sym, period='5y'):
     ticker = yf.Ticker(sym)
 
     # Fetch all data in parallel — info is now included in the pool
     with ThreadPoolExecutor(max_workers=4) as ex:
-        hist_fut  = ex.submit(lambda: ticker.history(period='5y'))
+        hist_fut  = ex.submit(lambda: ticker.history(period=period))
         fin_fut   = ex.submit(fetch_financials, ticker)
         peers_fut = ex.submit(fetch_peers, sym)
         info_fut  = ex.submit(lambda: ticker.info or {})

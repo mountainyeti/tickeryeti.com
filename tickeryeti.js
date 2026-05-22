@@ -548,15 +548,16 @@ document.addEventListener('DOMContentLoaded', () => {
     state.range = range;
     document.querySelectorAll('#ty-range-btns .btn').forEach(b => b.classList.toggle('active', b === btn));
 
-    // 10Y: Lambda only returns 5Y — fetch the rest from Yahoo Finance in the browser
+    // 10Y: Lambda returns 5Y by default — re-fetch with period=10y when needed
     if (range === '10y' && (state.company.series || []).length < 2000) {
       try {
-        const full = await fetchYFChart(state.company.ticker);
-        if (full.length > (state.company.series || []).length) {
-          state.company.series = full;
+        const res = await fetch(`${API_BASE}/?ticker=${encodeURIComponent(state.company.ticker)}&period=10y`);
+        const d = await res.json();
+        if (d.series && d.series.length > (state.company.series || []).length) {
+          state.company.series = d.series;
         }
       } catch (e) {
-        console.warn('10Y chart fetch failed:', e.message);
+        console.warn('10Y fetch failed:', e.message);
       }
     }
 
