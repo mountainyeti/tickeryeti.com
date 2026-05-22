@@ -526,7 +526,7 @@ p { padding-top: 10px; }
   font-size: 12px;
   line-height: 1;
 }
-.ty-darkmode-switch input:checked + .ty-darkmode-slider { background: #1a1a2e; }
+.ty-darkmode-switch input:checked + .ty-darkmode-slider { background: #34a9df; }
 .ty-darkmode-switch input:checked + .ty-darkmode-slider:before {
   content: '☀️';
   transform: translateX(24px);

@@ -88,7 +88,7 @@ function fmtDate(s) {
 function getRecent() {
   try {
     const s = JSON.parse(localStorage.getItem('ty_recent') || '[]');
-    return s.length ? s : ['AAPL', 'NVDA', 'MSFT', 'TSLA'];
+    return (s.length ? s : ['AAPL', 'NVDA', 'MSFT', 'TSLA']).slice(0, 5);
   } catch { return ['AAPL', 'NVDA', 'MSFT', 'TSLA']; }
 }
 
