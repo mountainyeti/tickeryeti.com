@@ -422,7 +422,7 @@ function renderFinancials(company) {
         '<h3 class="ty-card-title">Financial Statements</h3>' +
         '<span class="small" style="opacity:.78">USD · annual (3yr)</span>' +
       '</div>' +
-      '<div class="ty-card-body" style="padding-bottom:0">' +
+      '<div class="ty-card-body">' +
         '<div class="d-flex align-items-center justify-content-between mb-3">' +
           '<div class="ty-tabs" id="ty-fin-tabs" role="tablist" aria-label="Financial statements">' +
             tabs.map((t, i) => `<button class="ty-tab${i===0?' active':''}" data-tab="${t.id}" role="tab" aria-selected="${i===0?'true':'false'}" aria-controls="ty-tab-${t.id}" id="ty-tabbtn-${t.id}">${t.label}</button>`).join('') +

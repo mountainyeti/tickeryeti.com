@@ -455,6 +455,21 @@ p { padding-top: 10px; }
 }
 .ty-tab:hover { color: #fff; }
 .ty-tab.active { color: #fff; border-bottom-color: #fff; }
+.ty-copy-btn {
+  background: none;
+  border: 1px solid rgba(255,255,255,0.25);
+  color: rgba(255,255,255,0.7);
+  font-size: 11px;
+  font-weight: 600;
+  font-family: inherit;
+  padding: 3px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background .12s, color .12s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.ty-copy-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
 
 /* ---- loading spinner ---- */
 .ty-spinner {

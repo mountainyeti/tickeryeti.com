@@ -407,8 +407,16 @@ def fetch_financials(ticker):
 
         rev = bn(inc_val('Total Revenue', 'Revenue'))
         ni  = bn(inc_val('Net Income', 'Net Income Common Stockholders'))
-        eps_raw = inc_val('Diluted EPS', 'Basic EPS')
-        eps = round(float(eps_raw), 2) if eps_raw else None
+        eps_raw = inc_val('Diluted EPS', 'Basic EPS', 'EPS', 'Earnings Per Share',
+                          'Net Income Per Share', 'Diluted Earnings Per Share')
+        if eps_raw is None:
+            # Compute from net income and diluted share count if available
+            ni_raw = inc_val('Net Income', 'Net Income Common Stockholders')
+            shares_raw = inc_val('Diluted Average Shares', 'Basic Average Shares',
+                                 'Weighted Average Diluted Shares Outstanding')
+            if ni_raw and shares_raw and shares_raw != 0:
+                eps_raw = ni_raw / shares_raw
+        eps = round(float(eps_raw), 2) if eps_raw is not None else None
         op_income = inc_val('Operating Income', 'EBIT')
         da = inc_val('Depreciation And Amortization', 'Reconciled Depreciation')
         ebitda = bn((op_income or 0) + (da or 0)) if op_income else bn(inc_val('EBITDA', 'Normalized EBITDA'))
@@ -431,7 +439,8 @@ def fetch_financials(ticker):
         cash_v     = bn(bal_val('Cash And Cash Equivalents', 'Cash Cash Equivalents And Short Term Investments'))
         debt_v     = bn(bal_val('Total Debt', 'Long Term Debt'))
         equity_v   = bn(bal_val('Stockholders Equity', 'Common Stock Equity'))
-        goodwill_v = bn(bal_val('Goodwill', 'Goodwill And Other Intangible Assets'))
+        goodwill_v = bn(bal_val('Goodwill', 'Goodwill And Other Intangible Assets',
+                                'Goodwill And Intangible Assets', 'Net Goodwill'))
         curr_a     = bn(bal_val('Current Assets'))
         curr_l     = bn(bal_val('Current Liabilities'))
         gw_pct     = round(goodwill_v / assets_v * 100, 1) if goodwill_v and assets_v else None
