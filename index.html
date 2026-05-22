@@ -1,88 +1,148 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VXS96WNXCF"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-VXS96WNXCF');
-    </script>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="styles.css">
-    <link rel="shortcut icon" href="./images/tickeryeti_favicon.png"/>
-    <title>TickerYeti</title>
-  </head>
+<head>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VXS96WNXCF"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-VXS96WNXCF');
+  </script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="shortcut icon" href="./images/tickeryeti_favicon.png">
+  <title>TickerYeti</title>
+</head>
+<body>
+<div class="container py-2">
 
-  <body>
-    <div class="container">
-      <nav class="navbar navbar-expand-md navbar-light fixed-top" style="background-color: #ffffff;">
-        <div class="container-fluid">
-          <a class="navbar-brand tickeryeti_brand" href="index.html"><img src="./images/tickeryeti_face_brand.png"> TickerYeti</a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto">
-              <li class="nav-item">
-                <a class="nav-link" href="help.html">Help</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="mailto:chad@mountainstache.com?Subject=TickerYeti%20Contact">Contact</a>
-              </li>
-            </ul>
-            <ul class="navbar-nav ms-auto">
-              <li class="nav-item">
-                <img class="navbar-brand" src="./images/mountainstache_brand.png">
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
+  <!-- Nav -->
+  <nav class="ty-navbar d-flex justify-content-between align-items-center mb-4">
+    <a class="ty-brand" href="index.html">
+      <img src="./images/tickeryeti_face_brand.png" class="ty-brand-img" alt="TickerYeti">
+      TickerYeti
+    </a>
+    <div class="d-flex gap-4 small">
+      <a href="about.html" class="text-white text-decoration-none">About</a>
+      <a href="help.html" class="text-white text-decoration-none">Help</a>
     </div>
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-5">
-          <div class="interface">
-            <h4>Enter Stock Ticker Symbol</h4>
-            <form id="ticker">
-              <div class="mb-3">
-                <input type="text" name="tickersymbol" id="tickersymbol" class="form-control" style="width: auto; display: inline-block;">
-                <button type="submit" class="btn btn-secondary">Yeti</button>
-              </div>
-              <div class="mb-3">
-                <div>
-                  <input type="checkbox" name="yahoo_tickeryeti" id="yahoocheck_tickeryeti" checked>
-                  <label for="yahoocheck_tickeryeti">Yahoo Finance</label>
-                </div>
-                <div>
-                  <input type="checkbox" name="seekingalpha_tickeryeti" id="seekingalphacheck_tickeryeti" checked>
-                  <label for="seekingalphacheck_tickeryeti">Seeking Alpha</label>
-                </div>
-                <div>
-                  <input type="checkbox" name="sec_tickeryeti" id="seccheck_tickeryeti" checked>
-                  <label for="seccheck_tickeryeti">Securities &amp; Exchange Commission</label>
-                </div>
-                <div>
-                  <input type="checkbox" name="finviz_tickeryeti" id="finvizcheck_tickeryeti" checked>
-                  <label for="finvizcheck_tickeryeti">Finviz</label>
-                </div>
-                <div>
-                  <input type="checkbox" name="stanford_tickeryeti" id="stanfordcheck_tickeryeti">
-                  <label for="stanfordcheck_tickeryeti"><a class="link_color" href="https://securities.stanford.edu/filings.html">Stanford Securities Class Action Search</a></label>
-                </div>
-              </div>
-            </form>
+  </nav>
+
+  <!-- Search -->
+  <div class="row mb-2">
+    <div class="col-lg-9">
+      <form class="ty-form-card" id="ty-form">
+        <div class="row g-2">
+          <div class="col">
+            <input type="text" id="tickersymbol" class="form-control ty-input"
+              placeholder="Enter ticker — e.g. AAPL"
+              maxlength="10" autocomplete="off" spellcheck="false">
+          </div>
+          <div class="col-auto">
+            <button type="submit" class="ty-btn-yeti">
+              <img src="./images/tickeryeti_face_brand.png" width="20" height="20" alt="">
+              Yeti
+            </button>
           </div>
         </div>
-        <div class="col-lg-7">
-          <img src="./images/tickeryeti_800x600.png" class="img-fluid">
+      </form>
+      <div class="d-flex align-items-center flex-wrap gap-2 mt-3 small" id="ty-recent-row"></div>
+    </div>
+  </div>
+
+  <!-- Dashboard -->
+  <div class="ty-dash" id="ty-dash">
+
+    <!-- Empty state -->
+    <div id="ty-empty" class="ty-empty">
+      <img src="./images/tickeryeti_800x600.png" class="ty-empty-img img-fluid" alt="TickerYeti">
+      <p class="mt-3 mb-0">Enter a ticker and hit <strong>Yeti</strong> to see the research dashboard.</p>
+    </div>
+
+    <!-- Dashboard content -->
+    <div id="ty-content" style="display:none">
+
+      <!-- Company header -->
+      <div class="row align-items-start g-3 mb-4">
+        <div class="col-lg-9" id="ty-co-col"></div>
+        <div class="col-lg-3 text-lg-end" id="ty-price-col"></div>
+      </div>
+
+      <!-- Chart -->
+      <div class="ty-card mb-4">
+        <div class="ty-card-head">
+          <h3 class="ty-card-title" id="ty-chart-label">Price</h3>
+          <div class="ty-range btn-group" role="group" id="ty-range-btns">
+            <button type="button" class="btn btn-outline-light active" data-range="1y">1Y</button>
+            <button type="button" class="btn btn-outline-light" data-range="2y">2Y</button>
+            <button type="button" class="btn btn-outline-light" data-range="3y">3Y</button>
+            <button type="button" class="btn btn-outline-light" data-range="5y">5Y</button>
+          </div>
+        </div>
+        <div class="ty-card-body">
+          <div class="ty-chart-wrap" id="ty-chart-wrap"></div>
+          <div class="d-flex justify-content-between small mt-2" style="opacity:0.85">
+            <span>Hover chart for daily close</span>
+            <span class="fw-semibold" id="ty-range-perf"></span>
+          </div>
         </div>
       </div>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc4s9bIOgUxi8T/jzmE6bVMFmVqO/qbeFqKmE1YcS/7" crossorigin="anonymous" defer></script>
-    <script type="text/javascript" src="tickeryeti.js" defer></script>
-  </body>
+
+      <!-- Stats -->
+      <div class="row g-3 mb-4" id="ty-stats-row"></div>
+
+      <!-- Financials + Peers -->
+      <div class="row g-3 mb-4">
+        <div class="col-lg-7">
+          <div class="ty-card h-100">
+            <div class="ty-card-head">
+              <h3 class="ty-card-title">3-year financials</h3>
+              <span class="small" style="opacity:0.78">USD · annual</span>
+            </div>
+            <div class="table-responsive">
+              <table class="table ty-table mb-0" id="ty-fin-table"></table>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-5">
+          <div class="ty-card h-100">
+            <div class="ty-card-head">
+              <h3 class="ty-card-title">Peers &amp; competitors</h3>
+              <span class="small" style="opacity:0.78" id="ty-peers-count"></span>
+            </div>
+            <div class="ty-card-body" id="ty-peers-body"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Research Avalanche -->
+      <div class="ty-card mb-4">
+        <div class="ty-card-head">
+          <h3 class="ty-card-title">Research Avalanche</h3>
+          <span class="small" style="opacity:0.78">Opens selected sources in new tabs</span>
+        </div>
+        <div class="ty-card-body">
+          <div class="d-flex flex-wrap gap-2 mb-3" id="ty-avalanche-checks"></div>
+          <button type="button" class="ty-btn-avalanche" id="ty-avalanche-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M18 3a3 3 0 0 0-3 3l-7 3a3 3 0 0 0 0 6l7 3a3 3 0 1 0 .75-1.87l-7-3a3 3 0 0 0 0-2.26l7-3A3 3 0 1 0 18 3z"/></svg>
+            Research Avalanche
+          </button>
+        </div>
+      </div>
+
+    </div><!-- /ty-content -->
+
+    <footer class="ty-foot">
+      <div>TickerYeti · Research, fast.</div>
+      <div>Data shown is illustrative. Not investment advice.</div>
+    </footer>
+  </div><!-- /ty-dash -->
+
+</div><!-- /container -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous" defer></script>
+<script src="tickeryeti.js" defer></script>
+</body>
 </html>
