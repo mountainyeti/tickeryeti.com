@@ -108,11 +108,17 @@ STATE_MAP = {
     'VA':'Virginia','WA':'Washington','WV':'West Virginia','WI':'Wisconsin','WY':'Wyoming'
 }
 
-# ── FMP peers (1 call, fallback gracefully) ────────────────────────────────────
+# ── Peers: FMP primary, Yahoo Finance fallback ────────────────────────────────
 
-def fetch_fmp_peers(sym):
+def fetch_peers(sym):
+    """Try FMP first (curated industry peers), fall back to Yahoo similar stocks."""
+    peers = _fmp_peers(sym)
+    if not peers:
+        peers = _yf_peers(sym)
+    return peers
+
+def _fmp_peers(sym):
     try:
-        sep = '?'
         url = f'{FMP_BASE}/stock-peers?symbol={sym}&apikey={FMP_KEY}'
         req = urllib.request.Request(url, headers={'User-Agent': 'tickeryeti/1.0'})
         with urllib.request.urlopen(req, timeout=8) as r:
@@ -122,7 +128,25 @@ def fetch_fmp_peers(sym):
             if isinstance(first, dict) and 'symbol' in first:
                 return [p['symbol'] for p in data if p.get('symbol') != sym][:8]
     except Exception as e:
-        logger.warning(f'FMP peers failed: {e}')
+        logger.info(f'FMP peers unavailable ({e}), trying Yahoo Finance')
+    return []
+
+def _yf_peers(sym):
+    """Yahoo Finance recommended symbols — similar companies by Yahoo's model."""
+    try:
+        url = f'https://query1.finance.yahoo.com/v6/finance/recommendationsbysymbol/{sym}'
+        req = urllib.request.Request(url, headers={
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+            'Accept': 'application/json',
+        })
+        with urllib.request.urlopen(req, timeout=8) as r:
+            data = json.loads(r.read())
+        result = data.get('finance', {}).get('result', [])
+        if result:
+            return [s['symbol'] for s in result[0].get('recommendedSymbols', [])
+                    if s.get('symbol') != sym][:8]
+    except Exception as e:
+        logger.warning(f'YF peers failed: {e}')
     return []
 
 # ── Main ───────────────────────────────────────────────────────────────────────
@@ -134,7 +158,7 @@ def build_response(sym):
     with ThreadPoolExecutor(max_workers=3) as ex:
         hist_fut  = ex.submit(lambda: ticker.history(period='10y'))
         fin_fut   = ex.submit(fetch_financials, ticker)
-        peers_fut = ex.submit(fetch_fmp_peers, sym)
+        peers_fut = ex.submit(fetch_peers, sym)
 
     info  = ticker.info or {}
     name  = info.get('longName') or info.get('shortName') or ''
