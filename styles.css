@@ -511,8 +511,10 @@ body.ty-dark .ty-modal { background: #161b22; }
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 14px;
 }
+.ty-foot-info { flex: 1 1 240px; }
+.ty-foot-links { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .ty-foot-sub { opacity: .6; margin-top: 3px; }
 .ty-foot-kofi {
   background: none;

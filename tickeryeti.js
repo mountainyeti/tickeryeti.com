@@ -532,10 +532,17 @@ async function loadTicker(raw) {
     document.getElementById('ty-loading').style.display = 'none';
     document.getElementById('ty-content').style.display = '';
     renderDashboard(company);
-    const navbar = document.querySelector('.navbar');
-    const offset = navbar ? navbar.offsetHeight + 12 : 12;
-    const top = document.getElementById('ty-content').getBoundingClientRect().top + window.scrollY - offset;
-    window.scrollTo({ top, behavior: 'smooth' });
+    // Blur active element so the mobile keyboard closes before we measure layout
+    if (document.activeElement && document.activeElement !== document.body) {
+      document.activeElement.blur();
+    }
+    // Double rAF: first frame lets the keyboard close and reflow, second frame measures
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const navbar = document.querySelector('.navbar');
+      const offset = navbar ? navbar.offsetHeight + 12 : 12;
+      const top = document.getElementById('ty-content').getBoundingClientRect().top + window.scrollY - offset;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }));
   } catch (e) {
     document.getElementById('ty-loading').style.display  = 'none';
     document.getElementById('ty-error').style.display    = '';
