@@ -17,7 +17,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-west-2
+          aws-region: us-east-1
 
       - name: Deploy to QA
         if: github.ref == 'refs/heads/qa'
@@ -31,6 +31,10 @@ jobs:
             --exclude ".gitignore" \
             --exclude "lambda/*" \
             --delete
+          aws cloudfront create-invalidation \
+            --distribution-id E2UFPZDNVM17BF \
+            --paths "/*" \
+            --region us-east-1
 
       - name: Deploy to Production
         if: github.ref == 'refs/heads/master'
@@ -44,3 +48,7 @@ jobs:
             --exclude ".gitignore" \
             --exclude "lambda/*" \
             --delete
+          aws cloudfront create-invalidation \
+            --distribution-id EL9KYS40OVA5W \
+            --paths "/*" \
+            --region us-east-1
