@@ -1,4 +1,4 @@
-name: Deploy
+name: Test and Deploy
 
 on:
   push:
@@ -7,7 +7,29 @@ on:
       - qa
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install -r requirements-test.txt
+
+      - name: Install Playwright browsers
+        run: playwright install chromium --with-deps
+
+      - name: Run API tests
+        run: pytest tests/test_api.py -v
+
+      - name: Run frontend tests
+        run: pytest tests/test_frontend.py -v
+
   deploy:
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -30,6 +52,8 @@ jobs:
             --exclude "README.md" \
             --exclude ".gitignore" \
             --exclude "lambda/*" \
+            --exclude "tests/*" \
+            --exclude "requirements-test.txt" \
             --delete
           aws cloudfront create-invalidation \
             --distribution-id E2UFPZDNVM17BF \
@@ -47,6 +71,8 @@ jobs:
             --exclude "README.md" \
             --exclude ".gitignore" \
             --exclude "lambda/*" \
+            --exclude "tests/*" \
+            --exclude "requirements-test.txt" \
             --delete
           aws cloudfront create-invalidation \
             --distribution-id EL9KYS40OVA5W \
