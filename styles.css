@@ -8,7 +8,7 @@
 }
 
 html, body {
-  background: var(--ty-blue);
+  background: var(--ty-blue-800);
   color: #fff;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
