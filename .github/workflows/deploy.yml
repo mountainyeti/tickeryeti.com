@@ -41,6 +41,24 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
+      - name: Deploy Lambda
+        run: |
+          cd lambda
+          zip -j function.zip function.py
+          aws lambda update-function-code \
+            --function-name tickeryeti-api \
+            --zip-file fileb://function.zip \
+            --region us-east-1 \
+            --output text > /dev/null
+          aws lambda wait function-updated \
+            --function-name tickeryeti-api \
+            --region us-east-1
+          aws lambda update-function-configuration \
+            --function-name tickeryeti-api \
+            --environment "Variables={FMP_KEY=${{ secrets.FMP_KEY }},GITHUB_TOKEN=${{ secrets.FEEDBACK_GITHUB_PAT }}}" \
+            --region us-east-1 \
+            --output text > /dev/null
+
       - name: Deploy to QA
         if: github.ref == 'refs/heads/qa'
         run: |

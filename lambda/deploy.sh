@@ -6,14 +6,13 @@ REGION="us-east-1"
 ACCOUNT="141242608176"
 ROLE_NAME="tickeryeti-lambda-role"
 ROLE_ARN="arn:aws:iam::${ACCOUNT}:role/${ROLE_NAME}"
-if [ -z "$FMP_KEY" ]; then
-  echo "Error: FMP_KEY environment variable not set."
+# In CI (GitHub Actions), Lambda is deployed automatically via deploy.yml.
+# For local one-off deploys, pass both keys:
+#   FMP_KEY=xxx GITHUB_TOKEN=yyy bash deploy.sh
+# Both keys are stored as GitHub Actions secrets (FMP_KEY, FEEDBACK_GITHUB_PAT).
+if [ -z "$FMP_KEY" ] || [ -z "$GITHUB_TOKEN" ]; then
   echo "Usage: FMP_KEY=your_key GITHUB_TOKEN=your_token bash deploy.sh"
-  exit 1
-fi
-if [ -z "$GITHUB_TOKEN" ]; then
-  echo "Error: GITHUB_TOKEN environment variable not set."
-  echo "Usage: FMP_KEY=your_key GITHUB_TOKEN=your_token bash deploy.sh"
+  echo "Keys are stored as GitHub Actions secrets — see repo Settings → Secrets."
   exit 1
 fi
 ENV_VARS="Variables={FMP_KEY=${FMP_KEY},GITHUB_TOKEN=${GITHUB_TOKEN}}"
