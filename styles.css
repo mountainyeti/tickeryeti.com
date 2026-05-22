@@ -543,8 +543,8 @@ body.ty-dark .navbar-nav .nav-link { color: rgba(255,255,255,0.8) !important; }
 body.ty-dark .ty-input { background: rgba(255,255,255,0.08); color: #fff; }
 body.ty-dark .ty-input::placeholder { color: rgba(255,255,255,0.35); }
 body.ty-dark .ty-input:focus { background: rgba(255,255,255,0.12); box-shadow: 0 0 0 .25rem rgba(255,255,255,.1); }
-body.ty-dark .ty-btn-yeti { background: rgba(255,255,255,0.12); color: #fff; border: 1px solid rgba(255,255,255,0.2); }
-body.ty-dark .ty-btn-yeti:hover { background: rgba(255,255,255,0.2); }
+body.ty-dark .ty-btn-yeti { background: #34a9df; color: #fff; border: none; }
+body.ty-dark .ty-btn-yeti:hover { background: #1e7fb0; }
 body.ty-dark .ty-foot { color: rgba(255,255,255,0.6); border-top-color: rgba(255,255,255,0.1); }
 body.ty-dark .ty-foot-brand { opacity: 0.75; }
 body.ty-dark .ty-foot-logo { filter: brightness(0) invert(1); }
