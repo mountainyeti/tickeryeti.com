@@ -1,6 +1,7 @@
 import json
 import os
 import re
+import time
 import urllib.request
 import urllib.error
 import logging
@@ -10,8 +11,15 @@ from datetime import datetime, timezone
 import yfinance as yf
 import pandas as pd
 
+# Lambda filesystem is read-only except /tmp — redirect yfinance caches there
+yf.set_tz_cache_location('/tmp')
+
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
+
+# In-memory response cache — survives across warm Lambda invocations
+_cache = {}
+CACHE_TTL = 900  # 15 minutes
 
 FMP_BASE = 'https://financialmodelingprep.com/stable'
 FMP_KEY  = os.environ['FMP_KEY']
@@ -34,7 +42,16 @@ def lambda_handler(event, context):
     if not sym or not re.match(r'^[A-Z0-9.\-]{1,10}$', sym):
         return err(400, 'Invalid ticker symbol')
     try:
-        return {'statusCode': 200, 'headers': CORS, 'body': json.dumps(build_response(sym))}
+        # Serve from cache if fresh
+        cached = _cache.get(sym)
+        if cached and time.time() - cached[0] < CACHE_TTL:
+            logger.info(f'Cache hit: {sym}')
+            return {'statusCode': 200, 'headers': CORS, 'body': cached[1]}
+
+        data = build_response(sym)
+        body = json.dumps(data)
+        _cache[sym] = (time.time(), body)
+        return {'statusCode': 200, 'headers': CORS, 'body': body}
     except NotFound:
         return err(404, f'No data found for {sym}')
     except Exception as e:
@@ -154,13 +171,14 @@ def _yf_peers(sym):
 def build_response(sym):
     ticker = yf.Ticker(sym)
 
-    # Fetch price history and financial statements in parallel
-    with ThreadPoolExecutor(max_workers=3) as ex:
-        hist_fut  = ex.submit(lambda: ticker.history(period='10y'))
+    # Fetch all data in parallel — info is now included in the pool
+    with ThreadPoolExecutor(max_workers=4) as ex:
+        hist_fut  = ex.submit(lambda: ticker.history(period='5y'))
         fin_fut   = ex.submit(fetch_financials, ticker)
         peers_fut = ex.submit(fetch_peers, sym)
+        info_fut  = ex.submit(lambda: ticker.info or {})
 
-    info  = ticker.info or {}
+    info  = info_fut.result()
     name  = info.get('longName') or info.get('shortName') or ''
     if not name:
         raise NotFound()

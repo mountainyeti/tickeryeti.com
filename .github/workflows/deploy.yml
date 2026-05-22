@@ -44,37 +44,17 @@ jobs:
       - name: Deploy to QA
         if: github.ref == 'refs/heads/qa'
         run: |
-          aws s3 sync . s3://aws-website-qatickeryeticom-x4mxs \
-            --exclude ".git/*" \
-            --exclude ".github/*" \
-            --exclude "deploy.sh" \
-            --exclude ".claude/*" \
-            --exclude "README.md" \
-            --exclude ".gitignore" \
-            --exclude "lambda/*" \
-            --exclude "tests/*" \
-            --exclude "requirements-test.txt" \
-            --delete
-          aws cloudfront create-invalidation \
-            --distribution-id E2UFPZDNVM17BF \
-            --paths "/*" \
-            --region us-east-1
+          X="--exclude .git/* --exclude .github/* --exclude deploy.sh --exclude .claude/* --exclude README.md --exclude .gitignore --exclude lambda/* --exclude tests/* --exclude requirements-test.txt"
+          aws s3 sync . s3://aws-website-qatickeryeticom-x4mxs $X --exclude "*.js" --exclude "*.css" --exclude "images/*" --cache-control "no-cache" --delete
+          aws s3 sync . s3://aws-website-qatickeryeticom-x4mxs $X --exclude "*.html" --exclude "images/*" --cache-control "public, max-age=3600" --delete
+          aws s3 sync . s3://aws-website-qatickeryeticom-x4mxs $X --exclude "*.html" --exclude "*.js" --exclude "*.css" --cache-control "public, max-age=604800" --delete
+          aws cloudfront create-invalidation --distribution-id E2UFPZDNVM17BF --paths "/*" --region us-east-1
 
       - name: Deploy to Production
         if: github.ref == 'refs/heads/master'
         run: |
-          aws s3 sync . s3://aws-website-tickeryeticom-llnte \
-            --exclude ".git/*" \
-            --exclude ".github/*" \
-            --exclude "deploy.sh" \
-            --exclude ".claude/*" \
-            --exclude "README.md" \
-            --exclude ".gitignore" \
-            --exclude "lambda/*" \
-            --exclude "tests/*" \
-            --exclude "requirements-test.txt" \
-            --delete
-          aws cloudfront create-invalidation \
-            --distribution-id EL9KYS40OVA5W \
-            --paths "/*" \
-            --region us-east-1
+          X="--exclude .git/* --exclude .github/* --exclude deploy.sh --exclude .claude/* --exclude README.md --exclude .gitignore --exclude lambda/* --exclude tests/* --exclude requirements-test.txt"
+          aws s3 sync . s3://aws-website-tickeryeticom-llnte $X --exclude "*.js" --exclude "*.css" --exclude "images/*" --cache-control "no-cache" --delete
+          aws s3 sync . s3://aws-website-tickeryeticom-llnte $X --exclude "*.html" --exclude "images/*" --cache-control "public, max-age=3600" --delete
+          aws s3 sync . s3://aws-website-tickeryeticom-llnte $X --exclude "*.html" --exclude "*.js" --exclude "*.css" --cache-control "public, max-age=604800" --delete
+          aws cloudfront create-invalidation --distribution-id EL9KYS40OVA5W --paths "/*" --region us-east-1
