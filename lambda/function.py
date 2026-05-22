@@ -312,15 +312,24 @@ def build_response(sym, period='5y'):
     jurisdiction = (STATE_MAP.get(str(state_raw).upper().strip(), state_raw) or '—') \
                    if country.upper() in ('US', 'USA', 'UNITED STATES') else country
 
-    # IPO year — use firstTradeDateEpochUtc from yfinance info (accurate),
-    # fall back to earliest date in series only if unavailable
+    # IPO year — try fast_info.first_trade_date (most reliable),
+    # then info dict epoch fields, last resort is earliest series date
     ipo_year = '—'
-    first_epoch = info.get('firstTradeDateEpochUtc')
-    if first_epoch:
-        try:
-            ipo_year = str(datetime.fromtimestamp(int(first_epoch), tz=timezone.utc).year)
-        except Exception:
-            pass
+    try:
+        ftd = ticker.fast_info.first_trade_date
+        if ftd:
+            ipo_year = str(ftd.year)
+    except Exception:
+        pass
+    if ipo_year == '—':
+        # Some yfinance versions expose epoch in info dict
+        first_epoch = info.get('firstTradeDateEpochUtc') or info.get('firstTradeDateMilliseconds')
+        if first_epoch:
+            try:
+                epoch_sec = first_epoch / 1000 if abs(first_epoch) > 1e10 else first_epoch
+                ipo_year = str(datetime.fromtimestamp(int(epoch_sec), tz=timezone.utc).year)
+            except Exception:
+                pass
     if ipo_year == '—' and series:
         ipo_year = series[0]['d'][:4]
 
