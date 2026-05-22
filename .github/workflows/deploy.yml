@@ -41,7 +41,20 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
+      - name: Check if Lambda changed
+        id: lambda_changed
+        run: |
+          BEFORE="${{ github.event.before }}"
+          if [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          elif git diff --name-only "$BEFORE" "${{ github.sha }}" | grep -q '^lambda/function\.py'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Deploy Lambda
+        if: steps.lambda_changed.outputs.changed == 'true'
         run: |
           cd lambda
           zip -j function.zip function.py
