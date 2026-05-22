@@ -372,15 +372,23 @@ def fetch_financials(ticker):
     for i, col in enumerate(inc.columns[:3]):
         yr = str(col.year)[-2:] if hasattr(col, 'year') else str(col)[-2:]
 
-        # Income statement
-        rev = bn(df_val(inc, 'Total Revenue', 'Revenue'))
-        ni  = bn(df_val(inc, 'Net Income', 'Net Income Common Stockholders'))
-        eps_raw = df_val(inc, 'Diluted EPS', 'Basic EPS')
+        # Income statement — column-specific lookup (df_val scans all columns, use this instead)
+        def inc_val(*names):
+            for name in names:
+                if name in inc.index:
+                    v = safe_float(inc.loc[name, col])
+                    if v is not None:
+                        return v
+            return None
+
+        rev = bn(inc_val('Total Revenue', 'Revenue'))
+        ni  = bn(inc_val('Net Income', 'Net Income Common Stockholders'))
+        eps_raw = inc_val('Diluted EPS', 'Basic EPS')
         eps = round(float(eps_raw), 2) if eps_raw else None
-        op_income = df_val(inc, 'Operating Income', 'EBIT')
-        da = df_val(inc, 'Depreciation And Amortization', 'Reconciled Depreciation')
-        ebitda = bn((op_income or 0) + (da or 0)) if op_income else bn(df_val(inc, 'EBITDA', 'Normalized EBITDA'))
-        int_exp_raw = df_val(inc, 'Interest Expense', 'Interest Expense Non Operating')
+        op_income = inc_val('Operating Income', 'EBIT')
+        da = inc_val('Depreciation And Amortization', 'Reconciled Depreciation')
+        ebitda = bn((op_income or 0) + (da or 0)) if op_income else bn(inc_val('EBITDA', 'Normalized EBITDA'))
+        int_exp_raw = inc_val('Interest Expense', 'Interest Expense Non Operating')
         int_exp = bn(int_exp_raw)
 
         # Balance sheet (column index may differ)
