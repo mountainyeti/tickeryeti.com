@@ -2,7 +2,7 @@
 set -e
 
 FUNCTION="tickeryeti-api"
-REGION="us-west-2"
+REGION="us-east-1"
 ACCOUNT="141242608176"
 ROLE_NAME="tickeryeti-lambda-role"
 ROLE_ARN="arn:aws:iam::${ACCOUNT}:role/${ROLE_NAME}"

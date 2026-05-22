@@ -346,6 +346,15 @@ p { padding-top: 10px; }
 .ty-peer-chg { font-weight: 600; font-size: 12px; opacity: .9; }
 
 /* ---- Research Avalanche button ---- */
+/* ---- Research Avalanche section ---- */
+.ty-card--avalanche { border-color: rgba(255,255,255,0.38); }
+.ty-card--avalanche .ty-card-head { background: rgba(255,255,255,0.07); }
+.ty-card-title--avalanche {
+  font-size: 15px;
+  letter-spacing: 0.1em;
+  opacity: 1;
+}
+
 .ty-btn-avalanche {
   background: #fff;
   color: var(--ty-blue);
@@ -548,6 +557,6 @@ body.ty-dark .ty-btn-yeti:hover { background: #1e7fb0; }
 body.ty-dark .ty-foot { color: rgba(255,255,255,0.6); border-top-color: rgba(255,255,255,0.1); }
 body.ty-dark .ty-foot-brand { opacity: 0.75; }
 body.ty-dark .ty-foot-logo { filter: brightness(0) invert(1); }
-body.ty-dark .ty-btn-avalanche { background: rgba(255,255,255,0.12); color: #fff; border: 1px solid rgba(255,255,255,0.2); }
-body.ty-dark .ty-btn-avalanche:hover { background: rgba(255,255,255,0.2); }
+body.ty-dark .ty-btn-avalanche { background: #34a9df; color: #fff; border: none; }
+body.ty-dark .ty-btn-avalanche:hover { background: #1e7fb0; }
 .ty-foot-logo { height: 28px; width: auto; }
