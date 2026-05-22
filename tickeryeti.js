@@ -549,4 +549,17 @@ document.addEventListener('DOMContentLoaded', () => {
     renderChart(document.getElementById('ty-chart-wrap'), state.company.series || [], state.range);
     updateRangePerf(state.company);
   });
+
+  // Dark mode
+  const darkBtn = document.getElementById('ty-darkmode-toggle');
+  const darkIcon = document.getElementById('ty-darkmode-icon');
+  if (localStorage.getItem('ty_dark') === '1') {
+    document.body.classList.add('ty-dark');
+    darkIcon.textContent = '☀️';
+  }
+  darkBtn.addEventListener('click', () => {
+    const isDark = document.body.classList.toggle('ty-dark');
+    darkIcon.textContent = isDark ? '☀️' : '🌙';
+    localStorage.setItem('ty_dark', isDark ? '1' : '0');
+  });
 });

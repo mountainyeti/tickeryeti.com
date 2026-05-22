@@ -490,3 +490,38 @@ p { padding-top: 10px; }
 .ty-hero-img { max-height: 240px; object-fit: contain; }
 .ty-foot-brand:hover { opacity: 1; }
 .ty-foot-logo { height: 28px; width: auto; }
+
+/* ---- dark mode toggle button ---- */
+.ty-darkmode-btn {
+  background: none;
+  border: 1px solid rgba(0,0,0,0.15);
+  border-radius: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  color: #333;
+  transition: background .15s;
+}
+.ty-darkmode-btn:hover { background: rgba(0,0,0,0.06); }
+
+/* ---- dark mode ---- */
+body.ty-dark { background: #0d1117; }
+body.ty-dark .ty-form-card { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); }
+body.ty-dark .ty-card { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.12); }
+body.ty-dark .ty-stat { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.12); }
+body.ty-dark .navbar { background-color: #161b22 !important; border-bottom: 1px solid rgba(255,255,255,0.1); }
+body.ty-dark .tickeryeti_brand { color: #58a6ff; }
+body.ty-dark .navbar-nav .nav-link { color: rgba(255,255,255,0.8) !important; }
+body.ty-dark .ty-input { background: rgba(255,255,255,0.08); color: #fff; }
+body.ty-dark .ty-input::placeholder { color: rgba(255,255,255,0.35); }
+body.ty-dark .ty-input:focus { background: rgba(255,255,255,0.12); box-shadow: 0 0 0 .25rem rgba(255,255,255,.1); }
+body.ty-dark .ty-btn-yeti { background: rgba(255,255,255,0.12); color: #fff; border: 1px solid rgba(255,255,255,0.2); }
+body.ty-dark .ty-btn-yeti:hover { background: rgba(255,255,255,0.2); }
+body.ty-dark .ty-darkmode-btn { border-color: rgba(255,255,255,0.2); color: #fff; }
+body.ty-dark .ty-darkmode-btn:hover { background: rgba(255,255,255,0.1); }
+body.ty-dark .ty-foot { color: rgba(255,255,255,0.6); border-top-color: rgba(255,255,255,0.1); }
+body.ty-dark .ty-foot-brand { opacity: 0.6; }
+body.ty-dark .ty-btn-avalanche { background: rgba(255,255,255,0.12); color: #fff; border: 1px solid rgba(255,255,255,0.2); }
+body.ty-dark .ty-btn-avalanche:hover { background: rgba(255,255,255,0.2); }
+.ty-foot-logo { height: 28px; width: auto; }
