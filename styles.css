@@ -491,19 +491,40 @@ p { padding-top: 10px; }
 .ty-foot-brand:hover { opacity: 1; }
 .ty-foot-logo { height: 28px; width: auto; }
 
-/* ---- dark mode toggle button ---- */
-.ty-darkmode-btn {
-  background: none;
-  border: 1px solid rgba(0,0,0,0.15);
-  border-radius: 6px;
-  padding: 4px 8px;
+/* ---- dark mode toggle switch ---- */
+.ty-darkmode-switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  margin: 0;
   cursor: pointer;
-  font-size: 16px;
-  line-height: 1;
-  color: #333;
-  transition: background .15s;
 }
-.ty-darkmode-btn:hover { background: rgba(0,0,0,0.06); }
+.ty-darkmode-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+.ty-darkmode-slider {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: #ccc;
+  border-radius: 24px;
+  transition: background .25s;
+}
+.ty-darkmode-slider:before {
+  content: "";
+  position: absolute;
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform .25s;
+  box-shadow: 0 1px 3px rgba(0,0,0,.2);
+}
+.ty-darkmode-switch input:checked + .ty-darkmode-slider { background: #34a9df; }
+.ty-darkmode-switch input:checked + .ty-darkmode-slider:before { transform: translateX(20px); }
+
+/* dark mode context */
+body.ty-dark .ty-darkmode-switch input:checked + .ty-darkmode-slider { background: #58a6ff; }
 
 /* ---- dark mode ---- */
 html.ty-dark, body.ty-dark { background: #0d1117; }
@@ -518,8 +539,6 @@ body.ty-dark .ty-input::placeholder { color: rgba(255,255,255,0.35); }
 body.ty-dark .ty-input:focus { background: rgba(255,255,255,0.12); box-shadow: 0 0 0 .25rem rgba(255,255,255,.1); }
 body.ty-dark .ty-btn-yeti { background: rgba(255,255,255,0.12); color: #fff; border: 1px solid rgba(255,255,255,0.2); }
 body.ty-dark .ty-btn-yeti:hover { background: rgba(255,255,255,0.2); }
-body.ty-dark .ty-darkmode-btn { border-color: rgba(255,255,255,0.2); color: #fff; }
-body.ty-dark .ty-darkmode-btn:hover { background: rgba(255,255,255,0.1); }
 body.ty-dark .ty-foot { color: rgba(255,255,255,0.6); border-top-color: rgba(255,255,255,0.1); }
 body.ty-dark .ty-foot-brand { opacity: 0.6; }
 body.ty-dark .ty-btn-avalanche { background: rgba(255,255,255,0.12); color: #fff; border: 1px solid rgba(255,255,255,0.2); }

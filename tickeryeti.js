@@ -551,17 +551,18 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Dark mode
-  const darkBtn = document.getElementById('ty-darkmode-toggle');
-  const darkIcon = document.getElementById('ty-darkmode-icon');
+  const darkToggle = document.getElementById('ty-darkmode-toggle');
   if (localStorage.getItem('ty_dark') === '1') {
     document.body.classList.add('ty-dark');
     document.documentElement.classList.add('ty-dark');
-    darkIcon.textContent = '☀️';
+    if (darkToggle) darkToggle.checked = true;
   }
-  darkBtn.addEventListener('click', () => {
-    const isDark = document.body.classList.toggle('ty-dark');
-    document.documentElement.classList.toggle('ty-dark', isDark);
-    darkIcon.textContent = isDark ? '☀️' : '🌙';
-    localStorage.setItem('ty_dark', isDark ? '1' : '0');
-  });
+  if (darkToggle) {
+    darkToggle.addEventListener('change', () => {
+      const isDark = darkToggle.checked;
+      document.body.classList.toggle('ty-dark', isDark);
+      document.documentElement.classList.toggle('ty-dark', isDark);
+      localStorage.setItem('ty_dark', isDark ? '1' : '0');
+    });
+  }
 });
