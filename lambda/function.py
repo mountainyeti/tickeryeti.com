@@ -435,6 +435,7 @@ def fetch_financials(ticker):
         curr_a     = bn(bal_val('Current Assets'))
         curr_l     = bn(bal_val('Current Liabilities'))
         gw_pct     = round(goodwill_v / assets_v * 100, 1) if goodwill_v and assets_v else None
+        de_ratio   = round(debt_v / equity_v, 2) if debt_v is not None and equity_v else None
 
         # Cash flow
         def cf_val(*names):
@@ -460,6 +461,7 @@ def fetch_financials(ticker):
             'cash':       cash_v,
             'op_cf':      op_cf,
             'total_debt': debt_v,
+            'de_ratio':   de_ratio,
             'goodwill':   goodwill_v,
             'gw_pct':     gw_pct,
             'curr_assets': curr_a,
