@@ -29,7 +29,33 @@ async function fetchTicker(ticker) {
   const res = await fetch(`${API_BASE}/?ticker=${encodeURIComponent(ticker)}`);
   const data = await res.json();
   if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+  // If Lambda didn't return price history (FMP premium ticker), fetch chart from
+  // Yahoo Finance directly from the browser — works fine from user IPs.
+  if (!data.series || data.series.length === 0) {
+    try {
+      data.series = await fetchYFChart(ticker);
+    } catch (e) {
+      console.warn('YF chart fallback failed:', e.message);
+    }
+  }
   return data;
+}
+
+async function fetchYFChart(ticker) {
+  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?interval=1d&range=10y&includeAdjustedClose=true`;
+  const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+  if (!res.ok) throw new Error(`Yahoo Finance ${res.status}`);
+  const json = await res.json();
+  const result = json.chart?.result?.[0];
+  if (!result) return [];
+  const ts      = result.timestamp || [];
+  const closes  = result.indicators?.adjclose?.[0]?.adjclose || result.indicators?.quote?.[0]?.close || [];
+  const volumes = result.indicators?.quote?.[0]?.volume || [];
+  return ts.map((t, i) => ({
+    d: new Date(t * 1000).toISOString().slice(0, 10),
+    p: closes[i] != null ? Math.round(closes[i] * 100) / 100 : null,
+    v: volumes[i] || 0,
+  })).filter(pt => pt.p !== null);
 }
 
 // ============================================================
