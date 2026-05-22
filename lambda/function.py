@@ -11,7 +11,9 @@ from datetime import datetime, timezone
 import yfinance as yf
 import pandas as pd
 
-# Lambda filesystem is read-only except /tmp — redirect yfinance caches there
+# Lambda filesystem is read-only except /tmp — redirect yfinance caches there.
+# Note: keep Lambda memory at 512MB — Lambda allocates CPU proportionally to memory,
+# and yfinance/pandas are CPU-bound. At 256MB requests took 2x longer (2900ms vs 1400ms).
 yf.set_tz_cache_location('/tmp')
 
 logger = logging.getLogger()
