@@ -264,6 +264,10 @@ function renderDashboard(company) {
       '</div>' +
     '</div>';
 
+  const srcLabel = company.data_source === 'fmp'
+    ? 'Financial Modeling Prep'
+    : 'SEC EDGAR · Yahoo Finance';
+
   document.getElementById('ty-price-col').innerHTML =
     `<div class="ty-price-now">${fmtPrice(last)}</div>` +
     `<div class="ty-price-chg ${chgUp ? 'up' : 'down'}">` +
@@ -271,7 +275,8 @@ function renderDashboard(company) {
       `${fmtPrice(Math.abs(last - yrAgo))} (${fmtPct(pct)})` +
     '</div>' +
     `<div class="small mt-1" style="opacity:0.78">1 Year Period Performance</div>` +
-    `<div class="small mt-2" style="opacity:0.65">As Of: ${company.as_of || '—'}</div>`;
+    `<div class="small mt-2" style="opacity:0.55">As Of: ${company.as_of || '—'}</div>` +
+    `<div class="small" style="opacity:0.55">Data: ${srcLabel}</div>`;
 
   // ── Chart ──────────────────────────────────────────────────────────────────
   document.getElementById('ty-chart-label').textContent = 'Price · ' + company.ticker;
@@ -497,8 +502,6 @@ async function loadTicker(raw) {
   document.getElementById('ty-error').style.display    = 'none';
   document.getElementById('ty-loading').style.display  = '';
 
-  document.getElementById('ty-dash').scrollIntoView({ behavior: 'smooth', block: 'start' });
-
   try {
     const company = await fetchTicker(t);
     state.company = company;
@@ -513,9 +516,11 @@ async function loadTicker(raw) {
     document.getElementById('ty-loading').style.display = 'none';
     document.getElementById('ty-content').style.display = '';
     renderDashboard(company);
+    document.getElementById('ty-content').scrollIntoView({ behavior: 'smooth', block: 'start' });
   } catch (e) {
-    document.getElementById('ty-loading').style.display = 'none';
-    document.getElementById('ty-error').style.display   = '';
+    document.getElementById('ty-loading').style.display  = 'none';
+    document.getElementById('ty-error').style.display    = '';
+    document.getElementById('ty-empty').style.display    = 'none';
     document.getElementById('ty-error-msg').textContent =
       e.message.includes('No data') ? `No data found for "${t}". Check the ticker symbol.` : e.message;
   }

@@ -122,9 +122,7 @@ p { padding-top: 10px; }
 
 /* ---- dashboard ---- */
 .ty-dash {
-  margin-top: 28px;
-  padding-top: 28px;
-  border-top: 1px solid var(--ty-line-soft);
+  margin-top: 12px;
 }
 
 .ty-card {
@@ -365,17 +363,27 @@ p { padding-top: 10px; }
 .ty-btn-avalanche:hover { background: var(--ty-blue-900); color: #fff; }
 .ty-btn-avalanche:active { transform: translateY(1px); }
 
-/* ---- empty state ---- */
+/* ---- hero yeti image (search area) ---- */
+.ty-hero-img {
+  max-height: 240px;
+  object-fit: contain;
+  opacity: 0.92;
+}
+
+/* ---- empty hint (below search row) ---- */
+.ty-empty-hint {
+  text-align: center;
+  padding: 20px 0 10px;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 15px;
+}
+
+/* ---- loading / error state ---- */
 .ty-empty {
   text-align: center;
-  padding: 40px 24px 60px;
+  padding: 40px 24px;
   color: rgba(255, 255, 255, 0.85);
 }
-.ty-empty-img {
-  max-width: 420px;
-  opacity: 0.9;
-}
-.ty-empty p { font-size: 16px; }
 
 /* ---- stat card tooltips ---- */
 .ty-stat[data-tip] { cursor: default; }

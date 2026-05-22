@@ -16,164 +16,175 @@
   <title>TickerYeti</title>
 </head>
 <body>
-<div class="container py-2">
 
-  <!-- Nav -->
-  <nav class="ty-navbar d-flex justify-content-between align-items-center mb-4">
-    <a class="ty-brand" href="index.html">
-      <img src="./images/tickeryeti_face_brand.png" class="ty-brand-img" alt="TickerYeti">
-      TickerYeti
-    </a>
-    <div class="d-flex gap-4 small">
-      <a href="about.html" class="text-white text-decoration-none">About</a>
-      <a href="help.html" class="text-white text-decoration-none">Help</a>
+  <!-- Nav — matches live site -->
+  <nav class="navbar navbar-expand-md navbar-light sticky-top" style="background-color: #ffffff;">
+    <div class="container">
+      <a class="navbar-brand tickeryeti_brand" href="index.html">
+        <img src="./images/tickeryeti_face_brand.png" height="30" alt=""> TickerYeti
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarContent">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item"><a class="nav-link" href="help.html">Help</a></li>
+          <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="mailto:chad@mountainstache.com?Subject=TickerYeti%20Contact">Contact</a></li>
+        </ul>
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <img class="navbar-brand" src="./images/mountainstache_brand.png" alt="MountainStache">
+          </li>
+        </ul>
+      </div>
     </div>
   </nav>
 
-  <!-- Search -->
-  <div class="row mb-2">
-    <div class="col-lg-9">
-      <form class="ty-form-card" id="ty-form">
-        <div class="row g-2">
-          <div class="col">
-            <input type="text" id="tickersymbol" class="form-control ty-input"
-              placeholder="Enter ticker — e.g. AAPL"
-              maxlength="10" autocomplete="off" spellcheck="false">
+  <div class="container py-3">
+
+    <!-- Search row + Yeti image — always visible -->
+    <div class="row align-items-center mb-3">
+      <div class="col-lg-6">
+        <form class="ty-form-card" id="ty-form">
+          <div class="row g-2">
+            <div class="col">
+              <input type="text" id="tickersymbol" class="form-control ty-input"
+                placeholder="Enter ticker — e.g. AAPL"
+                maxlength="10" autocomplete="off" spellcheck="false">
+            </div>
+            <div class="col-auto">
+              <button type="submit" class="ty-btn-yeti">Yeti</button>
+            </div>
           </div>
-          <div class="col-auto">
-            <button type="submit" class="ty-btn-yeti">
-              <img src="./images/tickeryeti_face_brand.png" width="20" height="20" alt="">
-              Yeti
+        </form>
+        <div class="d-flex align-items-center flex-wrap gap-2 mt-2 small" id="ty-recent-row"></div>
+      </div>
+      <div class="col-lg-6 text-center d-none d-lg-flex align-items-center justify-content-center">
+        <img src="./images/tickeryeti_800x600.png" class="img-fluid ty-hero-img" alt="TickerYeti">
+      </div>
+    </div>
+
+    <!-- Dashboard area -->
+    <div id="ty-dash">
+
+      <!-- Loading -->
+      <div id="ty-loading" class="ty-empty" style="display:none">
+        <div class="ty-spinner"></div>
+        <p class="mt-3 mb-0">Fetching data…</p>
+      </div>
+
+      <!-- Error -->
+      <div id="ty-error" class="ty-empty" style="display:none">
+        <p class="mb-1" style="font-size:18px;font-weight:700">Couldn't load ticker</p>
+        <p class="mb-0" id="ty-error-msg"></p>
+      </div>
+
+      <!-- Empty hint -->
+      <div id="ty-empty" class="ty-empty-hint">
+        <p class="mb-0">Enter a ticker above and hit <strong>Yeti</strong> to load the research dashboard.</p>
+      </div>
+
+      <!-- Dashboard content -->
+      <div id="ty-content" style="display:none">
+
+        <!-- Company header -->
+        <div class="row align-items-start g-3 mb-4">
+          <div class="col-lg-9" id="ty-co-col"></div>
+          <div class="col-lg-3 text-lg-end" id="ty-price-col"></div>
+        </div>
+
+        <!-- Chart -->
+        <div class="ty-card mb-4">
+          <div class="ty-card-head">
+            <h3 class="ty-card-title" id="ty-chart-label">Price</h3>
+            <div class="ty-range btn-group" role="group" id="ty-range-btns">
+              <button type="button" class="btn btn-outline-light active" data-range="1y">1Y</button>
+              <button type="button" class="btn btn-outline-light" data-range="2y">2Y</button>
+              <button type="button" class="btn btn-outline-light" data-range="3y">3Y</button>
+              <button type="button" class="btn btn-outline-light" data-range="5y">5Y</button>
+              <button type="button" class="btn btn-outline-light" data-range="10y">10Y</button>
+            </div>
+          </div>
+          <div class="ty-card-body">
+            <div class="ty-chart-wrap" id="ty-chart-wrap"></div>
+            <div class="d-flex justify-content-between small mt-2" style="opacity:0.85">
+              <span>Hover for daily close · bars = volume</span>
+              <span class="fw-semibold" id="ty-range-perf"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Key stock data -->
+        <div class="row g-3 mb-4" id="ty-stats-row"></div>
+
+        <!-- Financial Statements (tabbed) -->
+        <div id="ty-fin-section"></div>
+
+        <!-- Key Values -->
+        <div class="ty-card mb-4">
+          <div class="ty-card-head">
+            <h3 class="ty-card-title">Key Values</h3>
+            <span class="small" style="opacity:.78">Most recent fiscal year</span>
+          </div>
+          <div class="ty-card-body">
+            <div class="row g-3" id="ty-key-values"></div>
+          </div>
+        </div>
+
+        <!-- Valuation Ratios -->
+        <div class="ty-card mb-4">
+          <div class="ty-card-head">
+            <h3 class="ty-card-title">Valuation Ratios</h3>
+            <span class="small" style="opacity:.78">Based on most recent fiscal year</span>
+          </div>
+          <div class="ty-card-body">
+            <div class="row g-3" id="ty-valuation"></div>
+          </div>
+        </div>
+
+        <!-- Annual Update -->
+        <div class="ty-card mb-4">
+          <div class="ty-card-head">
+            <h3 class="ty-card-title">Annual Update</h3>
+          </div>
+          <div class="ty-card-body" id="ty-annual-update"></div>
+        </div>
+
+        <!-- Peers -->
+        <div class="ty-card mb-4">
+          <div class="ty-card-head">
+            <h3 class="ty-card-title">Peers &amp; competitors</h3>
+            <span class="small" style="opacity:0.78" id="ty-peers-count"></span>
+          </div>
+          <div class="ty-card-body" id="ty-peers-body"></div>
+        </div>
+
+        <!-- Research Avalanche -->
+        <div class="ty-card mb-4">
+          <div class="ty-card-head">
+            <h3 class="ty-card-title">Research Avalanche</h3>
+            <span class="small" style="opacity:0.78">Opens selected sources in new tabs</span>
+          </div>
+          <div class="ty-card-body">
+            <div class="d-flex flex-wrap gap-2 mb-3" id="ty-avalanche-checks"></div>
+            <button type="button" class="ty-btn-avalanche" id="ty-avalanche-btn">
+              Research Avalanche
             </button>
           </div>
         </div>
-      </form>
-      <div class="d-flex align-items-center flex-wrap gap-2 mt-3 small" id="ty-recent-row"></div>
-    </div>
-  </div>
 
-  <!-- Dashboard area -->
-  <div class="ty-dash" id="ty-dash">
+      </div><!-- /ty-content -->
 
-    <!-- Empty state -->
-    <div id="ty-empty" class="ty-empty">
-      <img src="./images/tickeryeti_800x600.png" class="ty-empty-img img-fluid" alt="TickerYeti">
-      <p class="mt-3 mb-0">Enter a ticker and hit <strong>Yeti</strong> to load the research dashboard.</p>
-    </div>
+      <footer class="ty-foot">
+        <div>TickerYeti · Research, fast.</div>
+        <div>Data provided by Financial Modeling Prep &amp; SEC EDGAR. Not investment advice.</div>
+      </footer>
+    </div><!-- /ty-dash -->
 
-    <!-- Loading -->
-    <div id="ty-loading" class="ty-empty" style="display:none">
-      <div class="ty-spinner"></div>
-      <p class="mt-3 mb-0">Fetching data…</p>
-    </div>
+  </div><!-- /container -->
 
-    <!-- Error -->
-    <div id="ty-error" class="ty-empty" style="display:none">
-      <p class="mb-1" style="font-size:18px;font-weight:700">Couldn't load ticker</p>
-      <p class="mb-0" id="ty-error-msg"></p>
-    </div>
-
-    <!-- Dashboard content -->
-    <div id="ty-content" style="display:none">
-
-      <!-- Company header -->
-      <div class="row align-items-start g-3 mb-4">
-        <div class="col-lg-9" id="ty-co-col"></div>
-        <div class="col-lg-3 text-lg-end" id="ty-price-col"></div>
-      </div>
-
-      <!-- Chart -->
-      <div class="ty-card mb-4">
-        <div class="ty-card-head">
-          <h3 class="ty-card-title" id="ty-chart-label">Price</h3>
-          <div class="ty-range btn-group" role="group" id="ty-range-btns">
-            <button type="button" class="btn btn-outline-light active" data-range="1y">1Y</button>
-            <button type="button" class="btn btn-outline-light" data-range="2y">2Y</button>
-            <button type="button" class="btn btn-outline-light" data-range="3y">3Y</button>
-            <button type="button" class="btn btn-outline-light" data-range="5y">5Y</button>
-            <button type="button" class="btn btn-outline-light" data-range="10y">10Y</button>
-          </div>
-        </div>
-        <div class="ty-card-body">
-          <div class="ty-chart-wrap" id="ty-chart-wrap"></div>
-          <div class="d-flex justify-content-between small mt-2" style="opacity:0.85">
-            <span>Hover for daily close · bars = volume</span>
-            <span class="fw-semibold" id="ty-range-perf"></span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Key stock data -->
-      <div class="row g-3 mb-4" id="ty-stats-row"></div>
-
-      <!-- Financial Statements (tabbed) -->
-      <div id="ty-fin-section"></div>
-
-      <!-- Key Values -->
-      <div class="ty-card mb-4">
-        <div class="ty-card-head">
-          <h3 class="ty-card-title">Key Values</h3>
-          <span class="small" style="opacity:.78">Most recent fiscal year</span>
-        </div>
-        <div class="ty-card-body">
-          <div class="row g-3" id="ty-key-values"></div>
-        </div>
-      </div>
-
-      <!-- Valuation Ratios -->
-      <div class="ty-card mb-4">
-        <div class="ty-card-head">
-          <h3 class="ty-card-title">Valuation Ratios</h3>
-          <span class="small" style="opacity:.78">Based on most recent fiscal year</span>
-        </div>
-        <div class="ty-card-body">
-          <div class="row g-3" id="ty-valuation"></div>
-        </div>
-      </div>
-
-      <!-- Annual Update -->
-      <div class="ty-card mb-4">
-        <div class="ty-card-head">
-          <h3 class="ty-card-title">Annual Update</h3>
-        </div>
-        <div class="ty-card-body" id="ty-annual-update"></div>
-      </div>
-
-      <!-- Peers -->
-      <div class="ty-card mb-4">
-        <div class="ty-card-head">
-          <h3 class="ty-card-title">Peers &amp; competitors</h3>
-          <span class="small" style="opacity:0.78" id="ty-peers-count"></span>
-        </div>
-        <div class="ty-card-body" id="ty-peers-body"></div>
-      </div>
-
-      <!-- Research Avalanche -->
-      <div class="ty-card mb-4">
-        <div class="ty-card-head">
-          <h3 class="ty-card-title">Research Avalanche</h3>
-          <span class="small" style="opacity:0.78">Opens selected sources in new tabs</span>
-        </div>
-        <div class="ty-card-body">
-          <div class="d-flex flex-wrap gap-2 mb-3" id="ty-avalanche-checks"></div>
-          <button type="button" class="ty-btn-avalanche" id="ty-avalanche-btn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M18 3a3 3 0 0 0-3 3l-7 3a3 3 0 0 0 0 6l7 3a3 3 0 1 0 .75-1.87l-7-3a3 3 0 0 0 0-2.26l7-3A3 3 0 1 0 18 3z"/></svg>
-            Research Avalanche
-          </button>
-        </div>
-      </div>
-
-    </div><!-- /ty-content -->
-
-    <footer class="ty-foot">
-      <div>TickerYeti · Research, fast.</div>
-      <div>Data provided by Financial Modeling Prep. Not investment advice.</div>
-    </footer>
-  </div>
-
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous" defer></script>
-<script src="tickeryeti.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous" defer></script>
+  <script src="tickeryeti.js" defer></script>
 </body>
 </html>
