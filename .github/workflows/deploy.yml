@@ -44,17 +44,47 @@ jobs:
       - name: Deploy to QA
         if: github.ref == 'refs/heads/qa'
         run: |
-          X="--exclude .git/* --exclude .github/* --exclude deploy.sh --exclude .claude/* --exclude README.md --exclude .gitignore --exclude lambda/* --exclude tests/* --exclude requirements-test.txt"
-          aws s3 sync . s3://aws-website-qatickeryeticom-x4mxs $X --exclude "*.js" --exclude "*.css" --exclude "images/*" --cache-control "no-cache" --delete
-          aws s3 sync . s3://aws-website-qatickeryeticom-x4mxs $X --exclude "*.html" --exclude "images/*" --cache-control "public, max-age=3600" --delete
-          aws s3 sync . s3://aws-website-qatickeryeticom-x4mxs $X --exclude "*.html" --exclude "*.js" --exclude "*.css" --cache-control "public, max-age=604800" --delete
-          aws cloudfront create-invalidation --distribution-id E2UFPZDNVM17BF --paths "/*" --region us-east-1
+          BUCKET="aws-website-qatickeryeticom-x4mxs"
+          BASE=(
+            --exclude '.git/*' --exclude '.github/*' --exclude 'deploy.sh'
+            --exclude '.claude/*' --exclude 'README.md' --exclude '.gitignore'
+            --exclude 'lambda/*' --exclude 'tests/*' --exclude 'requirements-test.txt'
+          )
+          # HTML: always revalidate
+          aws s3 sync . "s3://$BUCKET" "${BASE[@]}" \
+            --exclude '*.js' --exclude '*.css' --exclude 'images/*' \
+            --cache-control 'no-cache' --delete
+          # JS + CSS: 1-hour browser cache
+          aws s3 sync . "s3://$BUCKET" "${BASE[@]}" \
+            --exclude '*.html' --exclude 'images/*' \
+            --cache-control 'public, max-age=3600' --delete
+          # Images: 1-week browser cache
+          aws s3 sync . "s3://$BUCKET" "${BASE[@]}" \
+            --exclude '*.html' --exclude '*.js' --exclude '*.css' \
+            --cache-control 'public, max-age=604800' --delete
+          aws cloudfront create-invalidation \
+            --distribution-id E2UFPZDNVM17BF --paths '/*' --region us-east-1
 
       - name: Deploy to Production
         if: github.ref == 'refs/heads/master'
         run: |
-          X="--exclude .git/* --exclude .github/* --exclude deploy.sh --exclude .claude/* --exclude README.md --exclude .gitignore --exclude lambda/* --exclude tests/* --exclude requirements-test.txt"
-          aws s3 sync . s3://aws-website-tickeryeticom-llnte $X --exclude "*.js" --exclude "*.css" --exclude "images/*" --cache-control "no-cache" --delete
-          aws s3 sync . s3://aws-website-tickeryeticom-llnte $X --exclude "*.html" --exclude "images/*" --cache-control "public, max-age=3600" --delete
-          aws s3 sync . s3://aws-website-tickeryeticom-llnte $X --exclude "*.html" --exclude "*.js" --exclude "*.css" --cache-control "public, max-age=604800" --delete
-          aws cloudfront create-invalidation --distribution-id EL9KYS40OVA5W --paths "/*" --region us-east-1
+          BUCKET="aws-website-tickeryeticom-llnte"
+          BASE=(
+            --exclude '.git/*' --exclude '.github/*' --exclude 'deploy.sh'
+            --exclude '.claude/*' --exclude 'README.md' --exclude '.gitignore'
+            --exclude 'lambda/*' --exclude 'tests/*' --exclude 'requirements-test.txt'
+          )
+          # HTML: always revalidate
+          aws s3 sync . "s3://$BUCKET" "${BASE[@]}" \
+            --exclude '*.js' --exclude '*.css' --exclude 'images/*' \
+            --cache-control 'no-cache' --delete
+          # JS + CSS: 1-hour browser cache
+          aws s3 sync . "s3://$BUCKET" "${BASE[@]}" \
+            --exclude '*.html' --exclude 'images/*' \
+            --cache-control 'public, max-age=3600' --delete
+          # Images: 1-week browser cache
+          aws s3 sync . "s3://$BUCKET" "${BASE[@]}" \
+            --exclude '*.html' --exclude '*.js' --exclude '*.css' \
+            --cache-control 'public, max-age=604800' --delete
+          aws cloudfront create-invalidation \
+            --distribution-id EL9KYS40OVA5W --paths '/*' --region us-east-1
