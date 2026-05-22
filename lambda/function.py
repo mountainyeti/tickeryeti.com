@@ -188,6 +188,23 @@ STATE_MAP = {
     'VA':'Virginia','WA':'Washington','WV':'West Virginia','WI':'Wisconsin','WY':'Wyoming'
 }
 
+# ── IPO date from FMP profile ─────────────────────────────────────────────────
+
+def _fmp_ipo_year(sym):
+    """Return 4-digit IPO year string from FMP profile, or None if unavailable."""
+    try:
+        url = f'{FMP_BASE}/profile?symbol={sym}&apikey={FMP_KEY}'
+        req = urllib.request.Request(url, headers={'User-Agent': 'tickeryeti/1.0'})
+        with urllib.request.urlopen(req, timeout=6) as r:
+            data = json.loads(r.read())
+        profile = data[0] if isinstance(data, list) and data else data
+        ipo_date = profile.get('ipoDate') if isinstance(profile, dict) else None
+        if ipo_date and len(ipo_date) >= 4:
+            return ipo_date[:4]
+    except Exception:
+        pass
+    return None
+
 # ── Peers: FMP primary, Yahoo Finance fallback ────────────────────────────────
 
 def fetch_peers(sym):
@@ -235,11 +252,12 @@ def build_response(sym, period='5y'):
     ticker = yf.Ticker(sym)
 
     # Fetch all data in parallel — info is now included in the pool
-    with ThreadPoolExecutor(max_workers=4) as ex:
+    with ThreadPoolExecutor(max_workers=5) as ex:
         hist_fut  = ex.submit(lambda: ticker.history(period=period))
         fin_fut   = ex.submit(fetch_financials, ticker)
         peers_fut = ex.submit(fetch_peers, sym)
         info_fut  = ex.submit(lambda: ticker.info or {})
+        ipo_fut   = ex.submit(_fmp_ipo_year, sym)
 
     info  = info_fut.result()
     name  = info.get('longName') or info.get('shortName') or ''
@@ -312,24 +330,15 @@ def build_response(sym, period='5y'):
     jurisdiction = (STATE_MAP.get(str(state_raw).upper().strip(), state_raw) or '—') \
                    if country.upper() in ('US', 'USA', 'UNITED STATES') else country
 
-    # IPO year — try fast_info.first_trade_date (most reliable),
-    # then info dict epoch fields, last resort is earliest series date
-    ipo_year = '—'
-    try:
-        ftd = ticker.fast_info.first_trade_date
-        if ftd:
-            ipo_year = str(ftd.year)
-    except Exception:
-        pass
+    # IPO year — FMP profile is most accurate, then fast_info, then series fallback
+    ipo_year = ipo_fut.result() or '—'
     if ipo_year == '—':
-        # Some yfinance versions expose epoch in info dict
-        first_epoch = info.get('firstTradeDateEpochUtc') or info.get('firstTradeDateMilliseconds')
-        if first_epoch:
-            try:
-                epoch_sec = first_epoch / 1000 if abs(first_epoch) > 1e10 else first_epoch
-                ipo_year = str(datetime.fromtimestamp(int(epoch_sec), tz=timezone.utc).year)
-            except Exception:
-                pass
+        try:
+            ftd = ticker.fast_info.first_trade_date
+            if ftd:
+                ipo_year = str(ftd.year)
+        except Exception:
+            pass
     if ipo_year == '—' and series:
         ipo_year = series[0]['d'][:4]
 
