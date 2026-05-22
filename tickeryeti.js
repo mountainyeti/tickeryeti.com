@@ -95,7 +95,7 @@ function getRecent() {
 function addRecent(t) {
   try {
     const r = JSON.parse(localStorage.getItem('ty_recent') || '[]');
-    localStorage.setItem('ty_recent', JSON.stringify([t, ...r.filter(x => x !== t)].slice(0, 6)));
+    localStorage.setItem('ty_recent', JSON.stringify([t, ...r.filter(x => x !== t)].slice(0, 5)));
   } catch {}
 }
 
