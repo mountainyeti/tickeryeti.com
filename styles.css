@@ -312,7 +312,7 @@ p { padding-top: 10px; }
   border-bottom: 1px solid var(--ty-line-soft);
   vertical-align: middle;
 }
-.ty-table tbody tr:last-child td { border-bottom: none; }
+.ty-table tbody tr:last-child td { border-bottom: 1px solid var(--ty-line-soft); }
 .ty-table tbody td { font-variant-numeric: tabular-nums; }
 .ty-table .delta {
   margin-left: 6px;
