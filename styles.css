@@ -546,7 +546,8 @@ body.ty-dark .ty-input:focus { background: rgba(255,255,255,0.12); box-shadow: 0
 body.ty-dark .ty-btn-yeti { background: rgba(255,255,255,0.12); color: #fff; border: 1px solid rgba(255,255,255,0.2); }
 body.ty-dark .ty-btn-yeti:hover { background: rgba(255,255,255,0.2); }
 body.ty-dark .ty-foot { color: rgba(255,255,255,0.6); border-top-color: rgba(255,255,255,0.1); }
-body.ty-dark .ty-foot-brand { opacity: 0.6; }
+body.ty-dark .ty-foot-brand { opacity: 0.75; }
+body.ty-dark .ty-foot-logo { filter: brightness(0) invert(1); }
 body.ty-dark .ty-btn-avalanche { background: rgba(255,255,255,0.12); color: #fff; border: 1px solid rgba(255,255,255,0.2); }
 body.ty-dark .ty-btn-avalanche:hover { background: rgba(255,255,255,0.2); }
 .ty-foot-logo { height: 28px; width: auto; }
