@@ -312,9 +312,16 @@ def build_response(sym, period='5y'):
     jurisdiction = (STATE_MAP.get(str(state_raw).upper().strip(), state_raw) or '—') \
                    if country.upper() in ('US', 'USA', 'UNITED STATES') else country
 
-    # IPO year — yfinance doesn't always have this
+    # IPO year — use firstTradeDateEpochUtc from yfinance info (accurate),
+    # fall back to earliest date in series only if unavailable
     ipo_year = '—'
-    if series:
+    first_epoch = info.get('firstTradeDateEpochUtc')
+    if first_epoch:
+        try:
+            ipo_year = str(datetime.fromtimestamp(int(first_epoch), tz=timezone.utc).year)
+        except Exception:
+            pass
+    if ipo_year == '—' and series:
         ipo_year = series[0]['d'][:4]
 
     # 52-week range
