@@ -121,7 +121,7 @@ function getChartSlice(series, range) {
   return series.slice(-Math.min(map[range] || 252, series.length));
 }
 
-function renderChart(wrap, series, range) {
+function renderChart(wrap, series, range, ticker) {
   const data = getChartSlice(series, range);
   if (!data.length) { wrap.innerHTML = '<p class="small" style="opacity:.7;padding:20px">No chart data.</p>'; return; }
 
@@ -164,8 +164,14 @@ function renderChart(wrap, series, range) {
     }
   });
 
+  const startP = data[0].p, endP = data[data.length - 1].p;
+  const pctChg = startP ? (((endP - startP) / startP) * 100).toFixed(1) : '0.0';
+  const chartLabel = ticker
+    ? `${ticker} price chart, ${range.toUpperCase()} — $${startP.toFixed(2)} to $${endP.toFixed(2)}, ${pctChg}% change`
+    : `Price chart, ${range.toUpperCase()}`;
+
   wrap.innerHTML =
-    `<svg class="ty-chart-svg" id="ty-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">` +
+    `<svg class="ty-chart-svg" id="ty-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="${chartLabel}">` +
       '<defs>' +
         '<linearGradient id="ty-fill" x1="0" y1="0" x2="0" y2="1">' +
           '<stop offset="0%" stop-color="#fff" stop-opacity="0.32"/>' +
@@ -280,7 +286,7 @@ function renderDashboard(company) {
 
   // ── Chart ──────────────────────────────────────────────────────────────────
   document.getElementById('ty-chart-label').textContent = 'Price · ' + company.ticker;
-  renderChart(document.getElementById('ty-chart-wrap'), s, state.range);
+  renderChart(document.getElementById('ty-chart-wrap'), s, state.range, company.ticker);
   updateRangePerf(company);
 
   // ── Key Stock Data ─────────────────────────────────────────────────────────
@@ -295,7 +301,7 @@ function renderDashboard(company) {
   ];
   document.getElementById('ty-stats-row').innerHTML = stockCards.map(c =>
     '<div class="col-6 col-md-4 col-xl-2">' +
-      `<div class="ty-stat" data-tip="${c.tip}">` +
+      `<div class="ty-stat" data-tip="${c.tip}" title="${c.tip}">` +
         `<div class="ty-stat-label">${c.label}</div>` +
         `<div class="ty-stat-value">${c.value || '—'}</div>` +
       '</div>' +
@@ -361,7 +367,7 @@ function renderBizDesc(biz) {
 
 function keyValueCard(label, value, tip) {
   return '<div class="col-md-4">' +
-    `<div class="ty-stat" data-tip="${tip}">` +
+    `<div class="ty-stat" data-tip="${tip}" title="${tip}">` +
       `<div class="ty-stat-label">${label}</div>` +
       `<div class="ty-stat-value">${value || '—'}</div>` +
     '</div>' +
@@ -562,7 +568,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    renderChart(document.getElementById('ty-chart-wrap'), state.company.series || [], state.range);
+    renderChart(document.getElementById('ty-chart-wrap'), state.company.series || [], state.range, state.company.ticker);
     updateRangePerf(state.company);
   });
   // Dark mode toggle is managed by navbar.js
