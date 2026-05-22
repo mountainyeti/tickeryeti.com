@@ -66,6 +66,21 @@ function fmtPrice(p) {
   if (p == null || p === 0) return '—';
   return '$' + Number(p).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
+function fmtCap(v) {
+  if (!v) return '—';
+  if (v >= 1e12) return '$' + (v / 1e12).toFixed(2) + 'T';
+  if (v >= 1e9)  return '$' + (v / 1e9).toFixed(2) + 'B';
+  if (v >= 1e6)  return '$' + (v / 1e6).toFixed(2) + 'M';
+  return '$' + v.toLocaleString(undefined, { maximumFractionDigits: 0 });
+}
+function parseCount(s) {
+  if (!s || s === '—') return 0;
+  const m = String(s).replace(/,/g, '').match(/^([\d.]+)([BMT]?)$/i);
+  if (!m) return 0;
+  const n = parseFloat(m[1]);
+  const su = m[2].toUpperCase();
+  return su === 'T' ? n * 1e12 : su === 'B' ? n * 1e9 : su === 'M' ? n * 1e6 : n;
+}
 function fmtBn(v) {
   if (v == null) return '—';
   if (Math.abs(v) >= 1000) return '$' + (v / 1000).toFixed(1) + 'T'; // v is already in $B
@@ -121,7 +136,7 @@ function getChartSlice(series, range) {
   return series.slice(-Math.min(map[range] || 252, series.length));
 }
 
-function renderChart(wrap, series, range, ticker) {
+function renderChart(wrap, series, range, ticker, sharesRaw) {
   const data = getChartSlice(series, range);
   if (!data.length) { wrap.innerHTML = '<p class="small" style="opacity:.7;padding:20px">No chart data.</p>'; return; }
 
@@ -204,6 +219,7 @@ function renderChart(wrap, series, range, ticker) {
     '<div id="ty-tip" class="ty-chart-hover" style="display:none">' +
       '<div class="hv-date" id="ty-tip-date"></div>' +
       '<div class="hv-price" id="ty-tip-price"></div>' +
+      '<div class="hv-mcap" id="ty-tip-mcap"></div>' +
       '<div class="hv-vol" id="ty-tip-vol"></div>' +
     '</div>';
 
@@ -213,6 +229,7 @@ function renderChart(wrap, series, range, ticker) {
   const tip    = wrap.querySelector('#ty-tip');
   const tipD   = wrap.querySelector('#ty-tip-date');
   const tipP   = wrap.querySelector('#ty-tip-price');
+  const tipM   = wrap.querySelector('#ty-tip-mcap');
   const tipV   = wrap.querySelector('#ty-tip-vol');
 
   svg.addEventListener('mousemove', e => {
@@ -231,6 +248,7 @@ function renderChart(wrap, series, range, ticker) {
     tip.style.top  = (cy / H * 100) + '%';
     tipD.textContent = fmtDate(data[idx].d);
     tipP.textContent = fmtPrice(data[idx].p);
+    tipM.textContent = sharesRaw ? 'Mkt Cap: ' + fmtCap(data[idx].p * sharesRaw) : '';
     tipV.textContent = data[idx].v ? 'Vol: ' + (data[idx].v / 1e6).toFixed(1) + 'M' : '';
   });
   svg.addEventListener('mouseleave', () => {
@@ -251,7 +269,7 @@ function renderDashboard(company) {
   const initials = company.name.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase();
 
   // ── Company header ─────────────────────────────────────────────────────────
-  const jurLabel = (company.country || '').toUpperCase().includes('US') ? 'State of Inc.' : 'Country';
+  const jurLabel = (company.country || '').toUpperCase().includes('US') ? 'State of Incorporation' : 'Country of Incorporation';
   document.getElementById('ty-co-col').innerHTML =
     '<div class="d-flex gap-3 align-items-start">' +
       (company.image
@@ -286,7 +304,7 @@ function renderDashboard(company) {
 
   // ── Chart ──────────────────────────────────────────────────────────────────
   document.getElementById('ty-chart-label').textContent = 'Price · ' + company.ticker;
-  renderChart(document.getElementById('ty-chart-wrap'), s, state.range, company.ticker);
+  renderChart(document.getElementById('ty-chart-wrap'), s, state.range, company.ticker, parseCount(company.stats && company.stats.shares));
   updateRangePerf(company);
 
   // ── Key Stock Data ─────────────────────────────────────────────────────────
@@ -313,9 +331,9 @@ function renderDashboard(company) {
 
   // ── Key Values ────────────────────────────────────────────────────────────
   document.getElementById('ty-key-values').innerHTML =
-    keyValueCard('Current Ratio',     st.curr_ratio, 'Current Assets ÷ Current Liabilities. Below 1.0 means current liabilities exceed current assets.') +
-    keyValueCard('Debt / Equity',     st.de_ratio,   'Total Debt ÷ Stockholders Equity. Higher values indicate more financial leverage.') +
-    keyValueCard('Interest Coverage', st.int_cov,    'EBITDA ÷ Interest Expense. Shows how easily the company can pay interest on its debt.');
+    keyValueCard('Current Ratio',          st.curr_ratio, 'Current Assets ÷ Current Liabilities. Below 1.0 means current liabilities exceed current assets.') +
+    keyValueCard('Total Debt to Equity',   st.de_ratio,   'Total Debt ÷ Stockholders Equity. Higher values indicate more financial leverage.') +
+    keyValueCard('Interest Coverage Ratio', st.int_cov,   'EBITDA ÷ Interest Expense. Shows how easily the company can pay interest on its debt.');
 
   // ── Valuation Ratios ──────────────────────────────────────────────────────
   document.getElementById('ty-valuation').innerHTML =
@@ -380,21 +398,21 @@ function renderFinancials(company) {
   ];
 
   const incRows = [
-    { label: 'Revenue',              key: 'rev',    fmt: fmtBn },
+    { label: 'Annual Revenue',        key: 'rev',    fmt: fmtBn },
     { label: 'Net Income',           key: 'ni',     fmt: fmtBn },
-    { label: 'EPS (diluted)',        key: 'eps',    fmt: v => v != null ? '$' + v.toFixed(2) : '—' },
+    { label: 'Earnings Per Share',   key: 'eps',    fmt: v => v != null ? '$' + v.toFixed(2) : '—' },
     { label: 'EBITDA',               key: 'ebitda', fmt: fmtBn },
   ];
   const balRows = [
-    { label: 'Total Assets',         key: 'assets',     fmt: fmtBn },
-    { label: 'Cash & Equivalents',   key: 'cash',       fmt: fmtBn },
-    { label: 'Total Debt',           key: 'total_debt', fmt: fmtBn },
-    { label: 'Stockholders Equity',  key: 'equity',     fmt: fmtBn },
-    { label: 'Goodwill',             key: 'goodwill',   fmt: fmtBn },
-    { label: 'Goodwill % of Assets', key: 'gw_pct',    fmt: v => v != null ? v.toFixed(1) + '%' : '—' },
+    { label: 'Total Assets',                  key: 'assets',     fmt: fmtBn },
+    { label: 'Cash and Equivalents',         key: 'cash',       fmt: fmtBn },
+    { label: 'Total Debt (Short + Long Term)', key: 'total_debt', fmt: fmtBn },
+    { label: 'Stockholders Equity',          key: 'equity',     fmt: fmtBn },
+    { label: 'Goodwill',                     key: 'goodwill',   fmt: fmtBn },
+    { label: 'Goodwill % of Total Assets',   key: 'gw_pct',    fmt: v => v != null ? v.toFixed(1) + '%' : '—' },
   ];
   const cfRows = [
-    { label: 'Operating Cash Flow',  key: 'op_cf', fmt: fmtBn },
+    { label: 'Cash Flow from Operations', key: 'op_cf', fmt: fmtBn },
   ];
 
   document.getElementById('ty-fin-section').innerHTML =
@@ -559,7 +577,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    renderChart(document.getElementById('ty-chart-wrap'), state.company.series || [], state.range, state.company.ticker);
+    renderChart(document.getElementById('ty-chart-wrap'), state.company.series || [], state.range, state.company.ticker, parseCount(state.company.stats && state.company.stats.shares));
     updateRangePerf(state.company);
   });
   // Dark mode toggle is managed by navbar.js
