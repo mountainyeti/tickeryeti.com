@@ -105,7 +105,17 @@ p { padding-top: 10px; }
   background: transparent;
   transition: background .12s, border-color .12s;
 }
-.ty-check input { display: none; }
+.ty-check input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
 .ty-check .ty-tick {
   width: 14px;
   height: 14px;

@@ -30,7 +30,7 @@
           '</ul>' +
           '<div class="d-flex align-items-center ms-3" title="Toggle dark mode">' +
             '<label class="ty-darkmode-switch">' +
-              '<input type="checkbox" id="ty-darkmode-toggle">' +
+              '<input type="checkbox" id="ty-darkmode-toggle" aria-label="Toggle dark mode">' +
               '<span class="ty-darkmode-slider"></span>' +
             '</label>' +
           '</div>' +
