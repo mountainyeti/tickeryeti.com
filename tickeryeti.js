@@ -541,28 +541,27 @@ document.addEventListener('DOMContentLoaded', () => {
     loadTicker(document.getElementById('tickersymbol').value);
   });
 
-  document.getElementById('ty-range-btns').addEventListener('click', e => {
+  document.getElementById('ty-range-btns').addEventListener('click', async e => {
     const btn = e.target.closest('[data-range]');
     if (!btn || !state.company) return;
-    state.range = btn.dataset.range;
+    const range = btn.dataset.range;
+    state.range = range;
     document.querySelectorAll('#ty-range-btns .btn').forEach(b => b.classList.toggle('active', b === btn));
+
+    // 10Y: Lambda only returns 5Y — fetch the rest from Yahoo Finance in the browser
+    if (range === '10y' && (state.company.series || []).length < 2000) {
+      try {
+        const full = await fetchYFChart(state.company.ticker);
+        if (full.length > (state.company.series || []).length) {
+          state.company.series = full;
+        }
+      } catch (e) {
+        console.warn('10Y chart fetch failed:', e.message);
+      }
+    }
+
     renderChart(document.getElementById('ty-chart-wrap'), state.company.series || [], state.range);
     updateRangePerf(state.company);
   });
-
-  // Dark mode
-  const darkToggle = document.getElementById('ty-darkmode-toggle');
-  if (localStorage.getItem('ty_dark') === '1') {
-    document.body.classList.add('ty-dark');
-    document.documentElement.classList.add('ty-dark');
-    if (darkToggle) darkToggle.checked = true;
-  }
-  if (darkToggle) {
-    darkToggle.addEventListener('change', () => {
-      const isDark = darkToggle.checked;
-      document.body.classList.toggle('ty-dark', isDark);
-      document.documentElement.classList.toggle('ty-dark', isDark);
-      localStorage.setItem('ty_dark', isDark ? '1' : '0');
-    });
-  }
+  // Dark mode toggle is managed by navbar.js
 });
