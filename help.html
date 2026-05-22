@@ -32,7 +32,8 @@
           <li class="nav-item"><a class="nav-link" href="help.html">Help</a></li>
           <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
         </ul>
-        <div class="d-flex align-items-center ms-3" title="Toggle dark mode">
+        <div class="d-flex align-items-center gap-1 ms-3" title="Toggle dark mode">
+          <span class="ty-darkmode-label">🌙</span>
           <label class="ty-darkmode-switch">
             <input type="checkbox" id="ty-darkmode-toggle">
             <span class="ty-darkmode-slider"></span>
@@ -324,25 +325,14 @@
       </div>
     </div>
 
-    <!-- 11. Dark Mode -->
+    <!-- 11. Pop-up Blocking -->
     <div class="ty-card mb-4">
       <div class="ty-card-head">
-        <h2 class="ty-card-title">11 &mdash; Dark Mode</h2>
-      </div>
-      <div class="ty-card-body">
-        <p class="mb-2">Use the <strong>toggle switch</strong> in the top-right corner of the navbar to switch between light and dark mode. TickerYeti remembers your preference — it's saved in your browser and applied automatically on every visit, with no flash of the wrong theme on load.</p>
-        <p class="mb-0" style="opacity:.82">The switch glows blue when dark mode is active.</p>
-      </div>
-    </div>
-
-    <!-- 12. Pop-up Blocking -->
-    <div class="ty-card mb-4">
-      <div class="ty-card-head">
-        <h2 class="ty-card-title">12 &mdash; Pop-up Blocking &amp; Research Avalanche</h2>
+        <h2 class="ty-card-title">11 &mdash; Troubleshooting: Pop-up Blocking</h2>
       </div>
       <div class="ty-card-body">
         <p class="mb-2">Browsers block multiple tabs opening at once because they treat them like pop-ups. When you click Research Avalanche, your browser may only allow the first tab to open and silently block the rest.</p>
-        <p class="mb-3">To fix this, you need to allow pop-ups from <strong>tickeryeti.com</strong>. Here's how to do it in Chrome:</p>
+        <p class="mb-3">To fix this, allow pop-ups from <strong>tickeryeti.com</strong>. Here's how in Chrome:</p>
         <div class="row g-4 mb-3">
           <div class="col-md-4">
             <p class="mb-2 text-center fw-semibold" style="font-size:14px">Step 1 &mdash; Click the blocked pop-ups icon on the right side of the address bar.</p>
@@ -357,7 +347,18 @@
             <img src="./images/popups_done.jpg" class="img-fluid rounded mx-auto d-block" alt="Chrome pop-up permission done">
           </div>
         </div>
-        <p class="mb-0" style="opacity:.82">On other browsers the steps are similar — look for a blocked pop-ups notification in the address bar and add an exception for tickeryeti.com.</p>
+        <p class="mb-0" style="opacity:.82">On other browsers, look for a blocked pop-ups notification in the address bar and add an exception for tickeryeti.com.</p>
+      </div>
+    </div>
+
+    <!-- 12. Dark Mode -->
+    <div class="ty-card mb-4">
+      <div class="ty-card-head">
+        <h2 class="ty-card-title">12 &mdash; Dark Mode</h2>
+      </div>
+      <div class="ty-card-body">
+        <p class="mb-2">Use the <strong>🌙 toggle switch</strong> in the top-right corner of the navbar to switch between light and dark mode. TickerYeti remembers your preference — it's saved in your browser and applied automatically on your next visit with no flash of the wrong theme.</p>
+        <p class="mb-0" style="opacity:.82">The switch track glows blue when dark mode is active.</p>
       </div>
     </div>
 

@@ -32,10 +32,12 @@
           <li class="nav-item"><a class="nav-link" href="help.html">Help</a></li>
           <li class="nav-item"><a class="nav-link active" href="about.html">About</a></li>
         </ul>
-        <div class="d-flex align-items-center ms-3">
-          <button class="ty-darkmode-btn" id="ty-darkmode-toggle" title="Toggle dark mode" type="button">
-            <span id="ty-darkmode-icon">🌙</span>
-          </button>
+        <div class="d-flex align-items-center gap-1 ms-3" title="Toggle dark mode">
+          <span class="ty-darkmode-label">🌙</span>
+          <label class="ty-darkmode-switch">
+            <input type="checkbox" id="ty-darkmode-toggle">
+            <span class="ty-darkmode-slider"></span>
+          </label>
         </div>
       </div>
     </div>
@@ -173,23 +175,17 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous" defer></script>
   <script>
-    // Dark mode toggle (mirrors tickeryeti.js behaviour for standalone pages)
-    (function () {
-      var btn = document.getElementById('ty-darkmode-toggle');
-      var icon = document.getElementById('ty-darkmode-icon');
-      function applyDark(on) {
-        document.documentElement.classList.toggle('ty-dark', on);
-        document.body.classList.toggle('ty-dark', on);
-        icon.textContent = on ? '☀️' : '🌙';
-      }
-      applyDark(localStorage.getItem('ty_dark') === '1');
-      btn.addEventListener('click', function () {
-        var isDark = document.documentElement.classList.toggle('ty-dark');
-        document.body.classList.toggle('ty-dark', isDark);
-        icon.textContent = isDark ? '☀️' : '🌙';
-        localStorage.setItem('ty_dark', isDark ? '1' : '0');
+    const t = document.getElementById('ty-darkmode-toggle');
+    if (t) {
+      t.checked = localStorage.getItem('ty_dark') === '1';
+      if (t.checked) { document.body.classList.add('ty-dark'); document.documentElement.classList.add('ty-dark'); }
+      t.addEventListener('change', () => {
+        const d = t.checked;
+        document.body.classList.toggle('ty-dark', d);
+        document.documentElement.classList.toggle('ty-dark', d);
+        localStorage.setItem('ty_dark', d ? '1' : '0');
       });
-    })();
+    }
   </script>
 </body>
 </html>

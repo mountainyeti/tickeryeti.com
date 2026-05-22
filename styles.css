@@ -255,6 +255,7 @@ p { padding-top: 10px; }
   border-radius: 12px;
   padding: 18px;
   height: 100%;
+  position: relative;
 }
 .ty-stat-label {
   font-size: 11px;
@@ -492,6 +493,7 @@ p { padding-top: 10px; }
 .ty-foot-logo { height: 28px; width: auto; }
 
 /* ---- dark mode toggle switch ---- */
+.ty-darkmode-label { font-size: 14px; line-height: 1; opacity: 0.75; }
 .ty-darkmode-switch {
   position: relative;
   display: inline-block;
