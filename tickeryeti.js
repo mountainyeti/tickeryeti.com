@@ -2,7 +2,7 @@
 // CONFIG
 // ============================================================
 
-const API_BASE = 'https://nlhh3rlzh9.execute-api.us-west-2.amazonaws.com';
+const API_BASE = 'https://0mzipto7d3.execute-api.us-east-1.amazonaws.com';
 
 const TY_SITES = [
   { id: 'yahoo',   label: 'Yahoo Finance', url: t => `https://finance.yahoo.com/quote/${t}` },
