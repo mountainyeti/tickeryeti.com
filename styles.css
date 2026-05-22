@@ -505,6 +505,19 @@ p { padding-top: 10px; }
   flex-wrap: wrap;
   gap: 12px;
 }
+.ty-foot-kofi {
+  color: rgba(255,255,255,0.8);
+  text-decoration: none;
+  font-size: 12px;
+  border: 1px solid rgba(255,255,255,0.25);
+  padding: 4px 12px;
+  border-radius: 999px;
+  transition: background .15s, opacity .15s;
+  white-space: nowrap;
+}
+.ty-foot-kofi:hover { background: rgba(255,255,255,0.12); color: #fff; }
+body.ty-dark .ty-foot-kofi { color: rgba(255,255,255,0.7); border-color: rgba(255,255,255,0.2); }
+body.ty-dark .ty-foot-kofi:hover { background: rgba(255,255,255,0.1); color: #fff; }
 .ty-foot-brand { display: inline-flex; align-items: center; opacity: 0.85; transition: opacity .15s; }
 
 /* ---- hero yeti image ---- */
