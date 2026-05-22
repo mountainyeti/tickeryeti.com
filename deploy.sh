@@ -20,6 +20,7 @@ aws s3 sync . s3://$BUCKET \
   --exclude ".claude/*" \
   --exclude "README.md" \
   --exclude ".gitignore" \
+  --exclude "lambda/*" \
   --delete
 
 echo "Done."
