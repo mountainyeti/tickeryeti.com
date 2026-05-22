@@ -330,7 +330,8 @@ def build_response(sym, period='5y'):
     jurisdiction = (STATE_MAP.get(str(state_raw).upper().strip(), state_raw) or '—') \
                    if country.upper() in ('US', 'USA', 'UNITED STATES') else country
 
-    # IPO year — FMP profile is most accurate, then fast_info, then series fallback
+    # IPO year — FMP profile is most accurate, fast_info as fallback.
+    # No series-date fallback: better to show blank than a misleading value.
     ipo_year = ipo_fut.result() or '—'
     if ipo_year == '—':
         try:
@@ -339,8 +340,6 @@ def build_response(sym, period='5y'):
                 ipo_year = str(ftd.year)
         except Exception:
             pass
-    if ipo_year == '—' and series:
-        ipo_year = series[0]['d'][:4]
 
     # 52-week range
     hi = safe_float(info.get('fiftyTwoWeekHigh'))
