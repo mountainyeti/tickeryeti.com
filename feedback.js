@@ -47,7 +47,7 @@
 
   // ── Submit handler ──────────────────────────────────────────────────────────
   document.getElementById('ty-feedback-modal').addEventListener('show.bs.modal', function () {
-    if (typeof gtag === 'function') gtag('event', 'feedback_opened');
+    tyTrack('feedback_opened');
   });
 
   document.getElementById('ty-fb-submit').addEventListener('click', function () {
@@ -70,7 +70,7 @@
     })
     .then(function (res) { if (!res.ok) throw new Error('server'); return res.json(); })
     .then(function () {
-      if (typeof gtag === 'function') gtag('event', 'feedback_submitted', { type: type });
+      tyTrack('feedback_submitted', { type: type });
       document.getElementById('ty-fb-body').innerHTML =
         '<div class="text-center py-3">' +
           '<p class="mb-1 fw-bold" style="font-size:18px">Thanks!</p>' +

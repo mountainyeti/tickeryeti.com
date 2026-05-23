@@ -4,9 +4,6 @@
 
 const API_BASE = 'https://0mzipto7d3.execute-api.us-east-1.amazonaws.com';
 
-function tyTrack(event, params) {
-  if (typeof gtag === 'function') gtag('event', event, params || {});
-}
 
 const TY_SITES = [
   { id: 'yahoo',   label: 'Yahoo Finance', url: t => `https://finance.yahoo.com/quote/${t}` },

@@ -1,6 +1,12 @@
 // Shared navbar component — single source of truth for all pages.
 // Usage: <div id="ty-navbar" data-page="help|about|"></div>
 //        <script src="navbar.js"></script>
+
+// Global analytics helper — available on all pages before any other script runs.
+function tyTrack(event, params) {
+  if (typeof gtag === 'function') gtag('event', event, params || {});
+}
+
 (function () {
   var container = document.getElementById('ty-navbar');
   if (!container) return;
@@ -52,7 +58,7 @@
       document.body.classList.toggle('ty-dark', dark);
       document.documentElement.classList.toggle('ty-dark', dark);
       localStorage.setItem('ty_dark', dark ? '1' : '0');
-      if (typeof gtag === 'function') gtag('event', 'dark_mode_toggled', { enabled: dark });
+      tyTrack('dark_mode_toggled', { enabled: dark });
     });
   }
 }());
