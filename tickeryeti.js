@@ -4,6 +4,10 @@
 
 const API_BASE = 'https://0mzipto7d3.execute-api.us-east-1.amazonaws.com';
 
+function tyTrack(event, params) {
+  if (typeof gtag === 'function') gtag('event', event, params || {});
+}
+
 const TY_SITES = [
   { id: 'yahoo',   label: 'Yahoo Finance', url: t => `https://finance.yahoo.com/quote/${t}` },
   { id: 'seeking', label: 'Seeking Alpha', url: t => `https://seekingalpha.com/symbol/${t}/earnings` },
@@ -123,7 +127,10 @@ function renderRecent() {
       `<span class="ty-peer-tick">${t}</span></button>`
     ).join('');
   row.querySelectorAll('[data-ticker]').forEach(btn => {
-    btn.addEventListener('click', () => loadTicker(btn.dataset.ticker));
+    btn.addEventListener('click', () => {
+      tyTrack('recent_ticker_clicked', { ticker: btn.dataset.ticker });
+      loadTicker(btn.dataset.ticker);
+    });
   });
 }
 
@@ -350,7 +357,10 @@ function renderDashboard(company) {
         `<button class="ty-peer" data-ticker="${t}"><span class="ty-peer-tick">${t}</span></button>`
       ).join('') + '</div>';
     peersBody.querySelectorAll('[data-ticker]').forEach(btn => {
-      btn.addEventListener('click', () => loadTicker(btn.dataset.ticker));
+      btn.addEventListener('click', () => {
+        tyTrack('peer_clicked', { ticker: btn.dataset.ticker, from: state.company && state.company.ticker });
+        loadTicker(btn.dataset.ticker);
+      });
     });
   } else {
     peersBody.innerHTML = '<p class="small mb-0" style="opacity:.78">No peers on file. Try Research Avalanche.</p>';
@@ -369,8 +379,8 @@ function renderBizDesc(biz) {
     `<p class="ty-biz mb-1" id="ty-biz-full" style="display:none">${biz}</p>` +
     `<button class="ty-link-btn" id="${id}" onclick="` +
       `var s=document.getElementById('ty-biz-short'),f=document.getElementById('ty-biz-full'),b=document.getElementById('${id}');` +
-      `if(f.style.display==='none'){f.style.display='';s.style.display='none';b.textContent='Show less';}` +
-      `else{s.style.display='';f.style.display='none';b.textContent='Show more…';}` +
+      `if(f.style.display==='none'){f.style.display='';s.style.display='none';b.textContent='Show less';if(typeof tyTrack==='function')tyTrack('biz_desc_expanded');}` +
+      `else{s.style.display='';f.style.display='none';b.textContent='Show more…';if(typeof tyTrack==='function')tyTrack('biz_desc_collapsed');}` +
     `">Show more…</button>`;
 }
 
@@ -447,6 +457,7 @@ function renderFinancials(company) {
     tabs.forEach(t => {
       document.getElementById('ty-tab-' + t.id).style.display = btn.dataset.tab === t.id ? '' : 'none';
     });
+    tyTrack('financial_tab_changed', { tab: btn.dataset.tab, ticker: state.company && state.company.ticker });
   });
 
   document.getElementById('ty-fin-copy').addEventListener('click', function () {
@@ -463,6 +474,7 @@ function renderFinancials(company) {
       return [r.fmt(v0), r.fmt(v1), pct].join('\t');
     });
     navigator.clipboard.writeText(dataRows.join('\n')).then(() => {
+      tyTrack('table_data_copied', { tab: activeTab && activeTab.dataset.tab, ticker: state.company && state.company.ticker });
       const orig = this.textContent;
       this.textContent = 'Copied!';
       setTimeout(() => { this.textContent = orig; }, 2000);
@@ -522,10 +534,13 @@ function renderAvalanche(ticker) {
       state.checks[id] = !state.checks[id];
       label.classList.toggle('on', state.checks[id]);
       label.querySelector('input').checked = state.checks[id];
+      tyTrack('avalanche_source_toggled', { source: id, enabled: state.checks[id] });
     });
   });
   document.getElementById('ty-avalanche-btn').onclick = () => {
-    TY_SITES.forEach(s => { if (state.checks[s.id]) window.open(s.url(ticker), '_blank'); });
+    const active = TY_SITES.filter(s => state.checks[s.id]);
+    tyTrack('avalanche_launched', { source_count: active.length, sources: active.map(s => s.id).join(',') });
+    active.forEach(s => window.open(s.url(ticker), '_blank'));
   };
 }
 
@@ -549,6 +564,7 @@ async function loadTicker(raw) {
     state.range   = '1y';
     addRecent(t);
     renderRecent();
+    tyTrack('ticker_searched', { ticker: t, sector: company.sector, exchange: company.exchange });
 
     document.querySelectorAll('#ty-range-btns .btn').forEach(btn => {
       btn.classList.toggle('active', btn.dataset.range === '1y');
@@ -595,6 +611,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const range = btn.dataset.range;
     state.range = range;
     document.querySelectorAll('#ty-range-btns .btn').forEach(b => b.classList.toggle('active', b === btn));
+    tyTrack('chart_range_changed', { range, ticker: state.company && state.company.ticker });
 
     // 10Y: Lambda returns 5Y by default — re-fetch with period=10y when needed
     if (range === '10y' && (state.company.series || []).length < 2000) {

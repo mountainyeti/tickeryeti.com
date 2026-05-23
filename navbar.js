@@ -52,6 +52,7 @@
       document.body.classList.toggle('ty-dark', dark);
       document.documentElement.classList.toggle('ty-dark', dark);
       localStorage.setItem('ty_dark', dark ? '1' : '0');
+      if (typeof gtag === 'function') gtag('event', 'dark_mode_toggled', { enabled: dark });
     });
   }
 }());
