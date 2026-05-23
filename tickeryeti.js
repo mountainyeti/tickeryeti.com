@@ -349,10 +349,12 @@ function renderDashboard(company) {
   document.getElementById('ty-peers-count').textContent = (company.peers || []).length + ' tickers';
   const peersBody = document.getElementById('ty-peers-body');
   if ((company.peers || []).length) {
+    const peerNames = company.peer_names || {};
     peersBody.innerHTML = '<div class="d-flex flex-wrap gap-2">' +
-      company.peers.map(t =>
-        `<button class="ty-peer" data-ticker="${t}"><span class="ty-peer-tick">${t}</span></button>`
-      ).join('') + '</div>';
+      company.peers.map(t => {
+        const name = peerNames[t];
+        return `<button class="ty-peer" data-ticker="${t}"${name ? ` data-tip="${name}"` : ''}><span class="ty-peer-tick">${t}</span></button>`;
+      }).join('') + '</div>';
     peersBody.querySelectorAll('[data-ticker]').forEach(btn => {
       btn.addEventListener('click', () => {
         tyTrack('peer_clicked', { ticker: btn.dataset.ticker, from: state.company && state.company.ticker });

@@ -340,6 +340,7 @@ p { padding-top: 10px; }
   font-size: 13px;
   font-family: inherit;
   transition: background .12s, border-color .12s, transform .05s;
+  position: relative;
 }
 .ty-peer:hover { background: #fff; color: var(--ty-blue); border-color: #fff; }
 .ty-peer:hover .ty-peer-tick { background: var(--ty-blue); color: #fff; }
@@ -409,7 +410,8 @@ p { padding-top: 10px; }
 
 /* ---- stat card tooltips ---- */
 .ty-stat[data-tip] { cursor: default; }
-.ty-stat[data-tip]::before {
+.ty-stat[data-tip]::before,
+.ty-peer[data-tip]::before {
   content: attr(data-tip);
   position: absolute;
   bottom: calc(100% + 8px);
@@ -432,7 +434,8 @@ p { padding-top: 10px; }
   border: 1px solid rgba(255, 255, 255, 0.18);
   box-shadow: 0 4px 16px rgba(0,0,0,.25);
 }
-.ty-stat[data-tip]:hover::before { opacity: 1; }
+.ty-stat[data-tip]:hover::before,
+.ty-peer[data-tip]:hover::before { opacity: 1; }
 
 /* ---- financial statement tabs ---- */
 .ty-tabs {
