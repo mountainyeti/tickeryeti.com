@@ -313,6 +313,7 @@ p { padding-top: 10px; }
   vertical-align: middle;
 }
 .ty-table tbody tr:last-child td { border-bottom: 1px solid var(--ty-line-soft); }
+.ty-table td:first-child, .ty-table th:first-child { border-left: none; padding-left: 8px; text-align: right; width: 25%; }
 .ty-table tbody td { font-variant-numeric: tabular-nums; }
 .ty-table .delta {
   margin-left: 6px;
