@@ -516,6 +516,36 @@ p { padding-top: 10px; }
 .ty-fb-hint { opacity: .75; }
 body.ty-dark .ty-modal { background: #161b22; }
 
+/* ---- cookie banner ---- */
+#ty-cookie-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--ty-blue-900);
+  color: rgba(255,255,255,0.9);
+  font-size: 13px;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  justify-content: center;
+  z-index: 2000;
+  border-top: 1px solid rgba(255,255,255,0.12);
+}
+#ty-cookie-ok {
+  background: #fff;
+  color: var(--ty-blue-900);
+  border: none;
+  border-radius: 999px;
+  padding: 4px 16px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+#ty-cookie-ok:hover { background: rgba(255,255,255,0.85); }
+
 /* ---- footer ---- */
 .ty-foot {
   margin-top: 56px;

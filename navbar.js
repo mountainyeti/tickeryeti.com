@@ -61,4 +61,19 @@ function tyTrack(event, params) {
       tyTrack('dark_mode_toggled', { enabled: dark });
     });
   }
+
+  // Cookie consent banner
+  if (!localStorage.getItem('ty_cookie_ok')) {
+    var banner = document.createElement('div');
+    banner.id = 'ty-cookie-banner';
+    banner.innerHTML =
+      'TickerYeti uses cookies for analytics. ' +
+      '<a href="privacy.html" style="color:inherit;font-weight:600">Privacy Policy</a>' +
+      '<button id="ty-cookie-ok" aria-label="Accept cookies">Got it</button>';
+    document.body.appendChild(banner);
+    document.getElementById('ty-cookie-ok').addEventListener('click', function () {
+      localStorage.setItem('ty_cookie_ok', '1');
+      banner.remove();
+    });
+  }
 }());
