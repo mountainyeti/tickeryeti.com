@@ -208,11 +208,40 @@ def _fmp_ipo_year(sym):
 # ── Peers: FMP primary, Yahoo Finance fallback ────────────────────────────────
 
 def fetch_peers(sym):
-    """Try FMP first (curated industry peers), fall back to Yahoo similar stocks."""
+    """Try FMP first (curated industry peers), fall back to Yahoo similar stocks.
+    Returns (peers_list, peer_names_dict)."""
     peers = _fmp_peers(sym)
     if not peers:
         peers = _yf_peers(sym)
-    return peers
+    names = _fmp_peer_names(peers) if peers else {}
+    return peers, names
+
+def _fmp_peer_names(peers):
+    """Batch-fetch company short names — FMP first, yfinance fallback."""
+    try:
+        symbols = ','.join(peers[:8])
+        url = f'{FMP_BASE}/profile?symbol={symbols}&apikey={FMP_KEY}'
+        req = urllib.request.Request(url, headers={'User-Agent': 'tickeryeti/1.0'})
+        with urllib.request.urlopen(req, timeout=6) as r:
+            data = json.loads(r.read())
+        if isinstance(data, list) and data:
+            names = {p['symbol']: p.get('companyName') or p['symbol']
+                     for p in data if p.get('symbol')}
+            if names:
+                return names
+    except Exception:
+        pass
+    # FMP unavailable — fall back to yfinance short names in parallel
+    names = {}
+    def _get_name(t):
+        try:
+            return t, yf.Ticker(t).info.get('shortName') or t
+        except Exception:
+            return t, t
+    with ThreadPoolExecutor(max_workers=len(peers)) as ex:
+        for t, n in ex.map(_get_name, peers[:8], timeout=8):
+            names[t] = n
+    return names
 
 def _fmp_peers(sym):
     try:
@@ -288,7 +317,7 @@ def build_response(sym, period='5y'):
     except Exception as e:
         logger.error(f'Financials failed: {e}')
 
-    peers = peers_fut.result()
+    peers, peer_names = peers_fut.result()
 
     # ── Stats from info ───────────────────────────────────────────────────────
     recent = fin[0] if fin else {}
@@ -378,8 +407,9 @@ def build_response(sym, period='5y'):
             'de_ratio':      de_ratio,
             'int_cov':       f'{int_cov}x' if int_cov != '—' else '—',
         },
-        'fin':   fin,
-        'peers': peers,
+        'fin':        fin,
+        'peers':      peers,
+        'peer_names': peer_names,
     }
 
 def fetch_financials(ticker):
