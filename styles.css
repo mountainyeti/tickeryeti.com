@@ -312,7 +312,8 @@ p { padding-top: 10px; }
   border-bottom: 1px solid var(--ty-line-soft);
   vertical-align: middle;
 }
-.ty-table tbody tr:last-child td { border-bottom: none; }
+.ty-table tbody tr:last-child td { border-bottom: 1px solid var(--ty-line-soft); }
+.ty-table td:first-child, .ty-table th:first-child { border-left: none; padding-left: 8px; text-align: right; width: 25%; }
 .ty-table tbody td { font-variant-numeric: tabular-nums; }
 .ty-table .delta {
   margin-left: 6px;
@@ -339,6 +340,7 @@ p { padding-top: 10px; }
   font-size: 13px;
   font-family: inherit;
   transition: background .12s, border-color .12s, transform .05s;
+  position: relative;
 }
 .ty-peer:hover { background: #fff; color: var(--ty-blue); border-color: #fff; }
 .ty-peer:hover .ty-peer-tick { background: var(--ty-blue); color: #fff; }
@@ -408,7 +410,8 @@ p { padding-top: 10px; }
 
 /* ---- stat card tooltips ---- */
 .ty-stat[data-tip] { cursor: default; }
-.ty-stat[data-tip]::before {
+.ty-stat[data-tip]::before,
+.ty-peer[data-tip]::before {
   content: attr(data-tip);
   position: absolute;
   bottom: calc(100% + 8px);
@@ -431,7 +434,8 @@ p { padding-top: 10px; }
   border: 1px solid rgba(255, 255, 255, 0.18);
   box-shadow: 0 4px 16px rgba(0,0,0,.25);
 }
-.ty-stat[data-tip]:hover::before { opacity: 1; }
+.ty-stat[data-tip]:hover::before,
+.ty-peer[data-tip]:hover::before { opacity: 1; }
 
 /* ---- financial statement tabs ---- */
 .ty-tabs {
@@ -455,6 +459,21 @@ p { padding-top: 10px; }
 }
 .ty-tab:hover { color: #fff; }
 .ty-tab.active { color: #fff; border-bottom-color: #fff; }
+.ty-copy-btn {
+  background: none;
+  border: 1px solid rgba(255,255,255,0.25);
+  color: rgba(255,255,255,0.7);
+  font-size: 11px;
+  font-weight: 600;
+  font-family: inherit;
+  padding: 3px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background .12s, color .12s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.ty-copy-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
 
 /* ---- loading spinner ---- */
 .ty-spinner {
@@ -499,6 +518,36 @@ p { padding-top: 10px; }
 .ty-modal .modal-title { font-weight: 700; }
 .ty-fb-hint { opacity: .75; }
 body.ty-dark .ty-modal { background: #161b22; }
+
+/* ---- cookie banner ---- */
+#ty-cookie-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--ty-blue-900);
+  color: rgba(255,255,255,0.9);
+  font-size: 13px;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  justify-content: center;
+  z-index: 2000;
+  border-top: 1px solid rgba(255,255,255,0.12);
+}
+#ty-cookie-ok {
+  background: #fff;
+  color: var(--ty-blue-900);
+  border: none;
+  border-radius: 999px;
+  padding: 4px 16px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+#ty-cookie-ok:hover { background: rgba(255,255,255,0.85); }
 
 /* ---- footer ---- */
 .ty-foot {

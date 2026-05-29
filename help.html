@@ -140,42 +140,38 @@
         <span class="small" style="opacity:.78">3 years of annual data</span>
       </div>
       <div class="ty-card-body">
-        <p class="mb-3">Three years of annual financial data are presented in a tabbed table. Click the tabs to switch between statements:</p>
+        <p class="mb-3">Three years of annual financial data are presented in a tabbed table. Click the tabs to switch between views:</p>
         <div class="row g-3 mb-4">
-          <div class="col-md-4">
+          <div class="col-md-6">
             <div class="ty-stat" style="height:auto">
-              <div class="ty-stat-label">Income Statement</div>
+              <div class="ty-stat-label">Risk Report Metrics</div>
               <ul class="mb-0 mt-2" style="font-size:14px;line-height:1.8;padding-left:1.1rem;">
-                <li>Revenue</li>
+                <li>Annual Revenue</li>
                 <li>Net Income</li>
                 <li>EPS (diluted)</li>
-                <li>EBITDA</li>
-              </ul>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="ty-stat" style="height:auto">
-              <div class="ty-stat-label">Balance Sheet</div>
-              <ul class="mb-0 mt-2" style="font-size:14px;line-height:1.8;padding-left:1.1rem;">
-                <li>Total Assets</li>
+                <li>Assets</li>
                 <li>Cash &amp; Equivalents</li>
-                <li>Total Debt</li>
-                <li>Stockholders Equity</li>
-                <li>Goodwill</li>
-                <li>Goodwill % of Assets</li>
+                <li>Cash Flow from Operations</li>
+                <li>Total Debt (ST + LT)</li>
+                <li>Debt to Equity Ratio</li>
+                <li>Goodwill as % of Total</li>
               </ul>
             </div>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-6">
             <div class="ty-stat" style="height:auto">
-              <div class="ty-stat-label">Cash Flow</div>
+              <div class="ty-stat-label">Additional Metrics</div>
               <ul class="mb-0 mt-2" style="font-size:14px;line-height:1.8;padding-left:1.1rem;">
-                <li>Operating Cash Flow</li>
+                <li>EBITDA</li>
+                <li>Goodwill</li>
+                <li>Stockholders Equity</li>
+                <li>Interest Expense</li>
               </ul>
             </div>
           </div>
         </div>
-        <p class="mb-0" style="opacity:.82">Each value column includes a <strong>year-over-year percentage change badge</strong> so you can spot growth or decline at a glance. Green-tinted badges indicate positive change; muted badges indicate negative change.</p>
+        <p class="mb-3">Each value column includes a <strong>year-over-year percentage change badge</strong> so you can spot growth or decline at a glance. Hover any row label to see a tooltip defining that metric.</p>
+        <p class="mb-0"><strong>Copy Data button</strong> &mdash; click <em>Copy Data</em> in the top-right of the table to copy the currently visible tab's data as tab-separated values. Paste directly into a spreadsheet or research form and the columns will align automatically. Credit Rating is included as a blank row in the copied output to preserve column alignment with forms that expect it, even though it isn't shown in the table.</p>
       </div>
     </div>
 
@@ -256,6 +252,7 @@
       </div>
       <div class="ty-card-body">
         <p class="mb-2">A set of clickable ticker chips listing companies in the same sector or competitive space. Click any peer chip to load that company's full dashboard instantly — the search box updates and the page scrolls to the new results.</p>
+        <p class="mb-2"><strong>Hover any peer chip</strong> to see a tooltip with the company's full name before clicking.</p>
         <p class="mb-0" style="opacity:.82">If no peers are on file for a particular ticker, use the Research Avalanche (below) to explore competitive landscape data on external sources.</p>
       </div>
     </div>
@@ -348,9 +345,10 @@
       <div class="ty-foot-info">
         <div class="fw-semibold">TickerYeti &mdash; Research, fast.</div>
         <div class="ty-foot-sub">Data: Yahoo Finance &amp; Financial Modeling Prep &nbsp;&middot;&nbsp; Not investment advice</div>
+        <div class="ty-foot-sub mt-1"><a href="privacy.html" style="color:inherit">Privacy</a> &nbsp;&middot;&nbsp; <a href="terms.html" style="color:inherit">Terms &amp; Disclaimer</a></div>
       </div>
       <div class="ty-foot-links">
-        <a href="https://ko-fi.com/tickeryeti" target="_blank" rel="noopener" class="ty-foot-kofi" aria-label="Support TickerYeti on Ko-fi (opens in new tab)">🍺 Buy us a beer</a>
+        <a href="https://ko-fi.com/tickeryeti" target="_blank" rel="noopener" class="ty-foot-kofi" aria-label="Support TickerYeti on Ko-fi (opens in new tab)" onclick="tyTrack('kofi_clicked')">🍺 Buy us a beer</a>
         <button type="button" class="ty-foot-kofi" data-bs-toggle="modal" data-bs-target="#ty-feedback-modal">Leave feedback</button>
         <a href="https://www.linkedin.com/in/chadklein/" target="_blank" rel="noopener" class="ty-foot-brand">
           <img src="./images/mountainstache_brand.png" alt="Built by MountainStache" class="ty-foot-logo">

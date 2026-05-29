@@ -1,6 +1,12 @@
 // Shared navbar component — single source of truth for all pages.
 // Usage: <div id="ty-navbar" data-page="help|about|"></div>
 //        <script src="navbar.js"></script>
+
+// Global analytics helper — available on all pages before any other script runs.
+function tyTrack(event, params) {
+  if (typeof gtag === 'function') gtag('event', event, params || {});
+}
+
 (function () {
   var container = document.getElementById('ty-navbar');
   if (!container) return;
@@ -52,6 +58,22 @@
       document.body.classList.toggle('ty-dark', dark);
       document.documentElement.classList.toggle('ty-dark', dark);
       localStorage.setItem('ty_dark', dark ? '1' : '0');
+      tyTrack('dark_mode_toggled', { enabled: dark });
+    });
+  }
+
+  // Cookie consent banner
+  if (!localStorage.getItem('ty_cookie_ok')) {
+    var banner = document.createElement('div');
+    banner.id = 'ty-cookie-banner';
+    banner.innerHTML =
+      'TickerYeti uses cookies for analytics. ' +
+      '<a href="privacy.html" style="color:inherit;font-weight:600">Privacy Policy</a>' +
+      '<button id="ty-cookie-ok" aria-label="Accept cookies">Got it</button>';
+    document.body.appendChild(banner);
+    document.getElementById('ty-cookie-ok').addEventListener('click', function () {
+      localStorage.setItem('ty_cookie_ok', '1');
+      banner.remove();
     });
   }
 }());

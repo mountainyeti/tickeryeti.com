@@ -46,6 +46,10 @@
   document.body.appendChild(modalEl.firstChild);
 
   // ── Submit handler ──────────────────────────────────────────────────────────
+  document.getElementById('ty-feedback-modal').addEventListener('show.bs.modal', function () {
+    tyTrack('feedback_opened');
+  });
+
   document.getElementById('ty-fb-submit').addEventListener('click', function () {
     var message = (document.getElementById('fb-message').value || '').trim();
     if (!message) { document.getElementById('fb-message').focus(); return; }
@@ -66,6 +70,7 @@
     })
     .then(function (res) { if (!res.ok) throw new Error('server'); return res.json(); })
     .then(function () {
+      tyTrack('feedback_submitted', { type: type });
       document.getElementById('ty-fb-body').innerHTML =
         '<div class="text-center py-3">' +
           '<p class="mb-1 fw-bold" style="font-size:18px">Thanks!</p>' +

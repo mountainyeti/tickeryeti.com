@@ -208,11 +208,40 @@ def _fmp_ipo_year(sym):
 # ── Peers: FMP primary, Yahoo Finance fallback ────────────────────────────────
 
 def fetch_peers(sym):
-    """Try FMP first (curated industry peers), fall back to Yahoo similar stocks."""
+    """Try FMP first (curated industry peers), fall back to Yahoo similar stocks.
+    Returns (peers_list, peer_names_dict)."""
     peers = _fmp_peers(sym)
     if not peers:
         peers = _yf_peers(sym)
-    return peers
+    names = _fmp_peer_names(peers) if peers else {}
+    return peers, names
+
+def _fmp_peer_names(peers):
+    """Batch-fetch company short names — FMP first, yfinance fallback."""
+    try:
+        symbols = ','.join(peers[:8])
+        url = f'{FMP_BASE}/profile?symbol={symbols}&apikey={FMP_KEY}'
+        req = urllib.request.Request(url, headers={'User-Agent': 'tickeryeti/1.0'})
+        with urllib.request.urlopen(req, timeout=6) as r:
+            data = json.loads(r.read())
+        if isinstance(data, list) and data:
+            names = {p['symbol']: p.get('companyName') or p['symbol']
+                     for p in data if p.get('symbol')}
+            if names:
+                return names
+    except Exception:
+        pass
+    # FMP unavailable — fall back to yfinance short names in parallel
+    names = {}
+    def _get_name(t):
+        try:
+            return t, yf.Ticker(t).info.get('shortName') or t
+        except Exception:
+            return t, t
+    with ThreadPoolExecutor(max_workers=len(peers)) as ex:
+        for t, n in ex.map(_get_name, peers[:8], timeout=8):
+            names[t] = n
+    return names
 
 def _fmp_peers(sym):
     try:
@@ -288,7 +317,7 @@ def build_response(sym, period='5y'):
     except Exception as e:
         logger.error(f'Financials failed: {e}')
 
-    peers = peers_fut.result()
+    peers, peer_names = peers_fut.result()
 
     # ── Stats from info ───────────────────────────────────────────────────────
     recent = fin[0] if fin else {}
@@ -378,8 +407,9 @@ def build_response(sym, period='5y'):
             'de_ratio':      de_ratio,
             'int_cov':       f'{int_cov}x' if int_cov != '—' else '—',
         },
-        'fin':   fin,
-        'peers': peers,
+        'fin':        fin,
+        'peers':      peers,
+        'peer_names': peer_names,
     }
 
 def fetch_financials(ticker):
@@ -407,8 +437,16 @@ def fetch_financials(ticker):
 
         rev = bn(inc_val('Total Revenue', 'Revenue'))
         ni  = bn(inc_val('Net Income', 'Net Income Common Stockholders'))
-        eps_raw = inc_val('Diluted EPS', 'Basic EPS')
-        eps = round(float(eps_raw), 2) if eps_raw else None
+        eps_raw = inc_val('Diluted EPS', 'Basic EPS', 'EPS', 'Earnings Per Share',
+                          'Net Income Per Share', 'Diluted Earnings Per Share')
+        if eps_raw is None:
+            # Compute from net income and diluted share count if available
+            ni_raw = inc_val('Net Income', 'Net Income Common Stockholders')
+            shares_raw = inc_val('Diluted Average Shares', 'Basic Average Shares',
+                                 'Weighted Average Diluted Shares Outstanding')
+            if ni_raw and shares_raw and shares_raw != 0:
+                eps_raw = ni_raw / shares_raw
+        eps = round(float(eps_raw), 2) if eps_raw is not None else None
         op_income = inc_val('Operating Income', 'EBIT')
         da = inc_val('Depreciation And Amortization', 'Reconciled Depreciation')
         ebitda = bn((op_income or 0) + (da or 0)) if op_income else bn(inc_val('EBITDA', 'Normalized EBITDA'))
@@ -431,10 +469,12 @@ def fetch_financials(ticker):
         cash_v     = bn(bal_val('Cash And Cash Equivalents', 'Cash Cash Equivalents And Short Term Investments'))
         debt_v     = bn(bal_val('Total Debt', 'Long Term Debt'))
         equity_v   = bn(bal_val('Stockholders Equity', 'Common Stock Equity'))
-        goodwill_v = bn(bal_val('Goodwill', 'Goodwill And Other Intangible Assets'))
+        goodwill_v = bn(bal_val('Goodwill', 'Goodwill And Other Intangible Assets',
+                                'Goodwill And Intangible Assets', 'Net Goodwill'))
         curr_a     = bn(bal_val('Current Assets'))
         curr_l     = bn(bal_val('Current Liabilities'))
         gw_pct     = round(goodwill_v / assets_v * 100, 1) if goodwill_v and assets_v else None
+        de_ratio   = round(debt_v / equity_v, 2) if debt_v is not None and equity_v else None
 
         # Cash flow
         def cf_val(*names):
@@ -460,6 +500,7 @@ def fetch_financials(ticker):
             'cash':       cash_v,
             'op_cf':      op_cf,
             'total_debt': debt_v,
+            'de_ratio':   de_ratio,
             'goodwill':   goodwill_v,
             'gw_pct':     gw_pct,
             'curr_assets': curr_a,
